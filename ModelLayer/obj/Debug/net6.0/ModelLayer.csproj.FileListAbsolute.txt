@@ -1,0 +1,12 @@
+D:\BRIDGELABZ\FundooNotes\ModelLayer\bin\Debug\net6.0\ModelLayer.deps.json
+D:\BRIDGELABZ\FundooNotes\ModelLayer\bin\Debug\net6.0\ModelLayer.dll
+D:\BRIDGELABZ\FundooNotes\ModelLayer\bin\Debug\net6.0\ModelLayer.pdb
+D:\BRIDGELABZ\FundooNotes\ModelLayer\obj\Debug\net6.0\ModelLayer.GeneratedMSBuildEditorConfig.editorconfig
+D:\BRIDGELABZ\FundooNotes\ModelLayer\obj\Debug\net6.0\ModelLayer.AssemblyInfoInputs.cache
+D:\BRIDGELABZ\FundooNotes\ModelLayer\obj\Debug\net6.0\ModelLayer.AssemblyInfo.cs
+D:\BRIDGELABZ\FundooNotes\ModelLayer\obj\Debug\net6.0\ModelLayer.csproj.CoreCompileInputs.cache
+D:\BRIDGELABZ\FundooNotes\ModelLayer\obj\Debug\net6.0\ModelLayer.sourcelink.json
+D:\BRIDGELABZ\FundooNotes\ModelLayer\obj\Debug\net6.0\ModelLayer.dll
+D:\BRIDGELABZ\FundooNotes\ModelLayer\obj\Debug\net6.0\refint\ModelLayer.dll
+D:\BRIDGELABZ\FundooNotes\ModelLayer\obj\Debug\net6.0\ModelLayer.pdb
+D:\BRIDGELABZ\FundooNotes\ModelLayer\obj\Debug\net6.0\ref\ModelLayer.dll
