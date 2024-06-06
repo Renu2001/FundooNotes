@@ -4,6 +4,7 @@ using RepositoryLayer.CustomException;
 using RepositoryLayer.Entity;
 using RepositoryLayer.Interface;
 using RepositoryLayer.Migrations;
+using RepositoryLayer.Utility;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,7 +17,6 @@ namespace RepositoryLayer.Service
     public class UserRL : IUserRL
     {
         private readonly FundooContext fundooContext;
-
         public UserRL(FundooContext fundooContext)
         {
             this.fundooContext = fundooContext;
@@ -32,7 +32,8 @@ namespace RepositoryLayer.Service
                 userEntity.firstName = user.firstName;
                 userEntity.lastName = user.lastName;
                 userEntity.email = user.email;
-                userEntity.password = user.password;
+                var password = HashingPassword.EncryptPassWord(user.password);
+                userEntity.password = password;
                 fundooContext.Users.Add(userEntity);
                 fundooContext.SaveChanges();
                 return userEntity;
@@ -46,12 +47,29 @@ namespace RepositoryLayer.Service
             
         }
 
+        //public UserEntity Login(LoginML login)
+        //{
+        //    var useremail = fundooContext.Users.FirstOrDefault(x => x.email == login.email);
+        //    var password = HashingPassword.EncryptPassWord(login.password);
+        //    var password = HashingPassword.DecryptPassWord(useremail.password);
+        //    var userpassword = fundooContext.Users.FirstOrDefault(y => y.password == password);
+        //    if (useremail != null && userpassword != null)
+        //    {
+        //        UserEntity userEntity = fundooContext.Users.FirstOrDefault(x => x.email == login.email);
+        //        return userEntity;
+        //    }
+        //    else
+        //    {
+        //        throw new CustomizeException("User Doesnt Exists !! Please Register First");
+        //    }
+        //}
+
         public UserEntity Login(LoginML login)
         {
-            
             var useremail = fundooContext.Users.FirstOrDefault(x => x.email == login.email);
-            var userpassword = fundooContext.Users.FirstOrDefault(y => y.password == login.password);
-            if (useremail != null && userpassword != null)
+            //var password = HashingPassword.EncryptPassWord(login.password);
+            var password = HashingPassword.DecryptPassWord(useremail.password);
+            if (useremail != null && password == login.password)
             {
                 UserEntity userEntity = fundooContext.Users.FirstOrDefault(x => x.email == login.email);
                 return userEntity;
