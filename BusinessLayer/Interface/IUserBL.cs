@@ -11,5 +11,6 @@ namespace BusinessLayer.Interface
     public interface IUserBL
     {
         public UserEntity RegisterUser(UserModel model);
+        public UserEntity Login(LoginML login);
     }
 }

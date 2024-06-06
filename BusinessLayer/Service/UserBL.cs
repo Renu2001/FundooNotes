@@ -33,5 +33,18 @@ namespace BusinessLayer.Service
             
         }
 
+        public UserEntity Login(LoginML login)
+        {
+            try
+            {
+                return _userRL.Login(login);
+            }
+            catch (CustomizeException ex)
+            {
+                throw;
+            }
+
+        }
+
     }
 }

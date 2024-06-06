@@ -35,16 +35,32 @@ namespace RepositoryLayer.Service
                 userEntity.password = user.password;
                 fundooContext.Users.Add(userEntity);
                 fundooContext.SaveChanges();
-               
+                return userEntity;
+
             }
             else
             {
                 throw new CustomizeException("User Already Exists !!");
             }
 
-            return userEntity;
+            
         }
 
-        
+        public UserEntity Login(LoginML login)
+        {
+            
+            var useremail = fundooContext.Users.FirstOrDefault(x => x.email == login.email);
+            var userpassword = fundooContext.Users.FirstOrDefault(y => y.password == login.password);
+            if (useremail != null && userpassword != null)
+            {
+                UserEntity userEntity = fundooContext.Users.FirstOrDefault(x => x.email == login.email);
+                return userEntity;
+            }
+            else
+            {
+                throw new CustomizeException("User Doesnt Exists !! Please Register First");
+            }
+        }
+
     }
 }

@@ -21,6 +21,7 @@ namespace FundooNotes.Controllers
         }
 
         [HttpPost]
+        [Route("Register")]
         public IActionResult RegisterUser(UserModel model)
         {
             
@@ -50,6 +51,35 @@ namespace FundooNotes.Controllers
             return StatusCode(200, mod);
         }
 
-        
+        [HttpPost]
+        [Route("Login")]
+        public IActionResult Login(LoginML login)
+        {
+            try
+            {
+                var result = userBL.Login(login);
+                if(result != null)
+                {
+                    mod = new ResponseModel()
+                    {
+                        Success = "true",
+                        Message = "Login Successfully",
+                        Data = result
+                    };
+                }
+            }
+            catch (CustomizeException ex)
+            {
+                mod = new ResponseModel()
+                {
+                    Success = "false",
+                    Message = ex.Message
+                };
+                return StatusCode(400, mod);
+            }
+            return StatusCode(200, mod);
+
+        }
+
     }
 }

@@ -11,6 +11,7 @@ namespace RepositoryLayer.Interface
     public interface IUserRL
     {
         public UserEntity RegisterUser(UserModel user);
-       
+        public UserEntity Login(LoginML login);
+
     }
 }
