@@ -3,7 +3,7 @@ using RepositoryLayer.Context;
 using RepositoryLayer.CustomException;
 using RepositoryLayer.Entity;
 using RepositoryLayer.Interface;
-using RepositoryLayer.Migrations;
+
 using RepositoryLayer.Utility;
 using System;
 using System.Collections.Generic;
@@ -23,28 +23,61 @@ namespace RepositoryLayer.Service
         }
 
 
+        //public UserEntity RegisterUser(UserModel user)
+        //{
+        //    UserEntity userEntity = new UserEntity();
+        //    var result = fundooContext.Users.FirstOrDefault(x => x.email == user.email);
+        //    if (result == null)
+        //    {
+        //        userEntity.firstName = user.firstName;
+        //        userEntity.lastName = user.lastName;
+        //        userEntity.email = user.email;
+        //        var password = HashingPassword.EncryptPassWord(user.password);
+        //        userEntity.password = password;
+        //        fundooContext.Users.Add(userEntity);
+        //        fundooContext.SaveChanges();
+        //        return userEntity;
+
+        //    }
+        //    else
+        //    {
+        //        throw new CustomizeException("User Already Exists !!");
+        //    }
+
+            
+        //}
         public UserEntity RegisterUser(UserModel user)
         {
             UserEntity userEntity = new UserEntity();
-            var result = fundooContext.Users.FirstOrDefault(x => x.email == user.email);
-            if (result == null)
+            //var result = fundooContext.Users.FirstOrDefault(x => x.email == user.email);
+            //if (result == null)
+            //{
+            userEntity.firstName = user.firstName;
+            userEntity.lastName = user.lastName;
+
+            userEntity.email = user.email;
+
+
+            var password = HashingPassword.EncryptPassWord(user.password);
+            userEntity.password = password;
+            fundooContext.Users.Add(userEntity);
+            try
             {
-                userEntity.firstName = user.firstName;
-                userEntity.lastName = user.lastName;
-                userEntity.email = user.email;
-                var password = HashingPassword.EncryptPassWord(user.password);
-                userEntity.password = password;
-                fundooContext.Users.Add(userEntity);
                 fundooContext.SaveChanges();
-                return userEntity;
-
             }
-            else
+            catch (Exception ex)
             {
-                throw new CustomizeException("User Already Exists !!");
+                throw new CustomizeException("Email Already Exists");
             }
+            return userEntity;
 
-            
+            //}
+            //else
+            //{
+            //    throw new CustomizeException("User Already Exists !!");
+            //}
+
+
         }
 
         //public UserEntity Login(LoginML login)
