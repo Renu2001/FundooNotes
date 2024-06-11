@@ -6,13 +6,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RepositoryLayer.Interface
+namespace BusinessLayer.Interface
 {
-    public interface IUserRL
+    public interface ITokenBL
     {
-        public UserEntity RegisterUser(UserModel user);
-       
-        public List<UserEntity> GetUsers();
-
+        public string AuthenticateUser(LoginML login);
+        public string GenerateToken(UserEntity user);
     }
 }

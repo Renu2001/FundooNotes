@@ -8,11 +8,9 @@ using System.Threading.Tasks;
 
 namespace RepositoryLayer.Interface
 {
-    public interface IUserRL
+    public interface ITokenRL
     {
-        public UserEntity RegisterUser(UserModel user);
-       
-        public List<UserEntity> GetUsers();
-
+        public string AuthenticateUser(LoginML login);
+        public string GenerateToken(UserEntity user);
     }
 }

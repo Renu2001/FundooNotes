@@ -70,3 +70,4 @@ D:\BRIDGELABZ\FundooNotes\FundooNotes\obj\Debug\net6.0\refint\FundooNotes.dll
 D:\BRIDGELABZ\FundooNotes\FundooNotes\obj\Debug\net6.0\FundooNotes.pdb
 D:\BRIDGELABZ\FundooNotes\FundooNotes\obj\Debug\net6.0\FundooNotes.genruntimeconfig.cache
 D:\BRIDGELABZ\FundooNotes\FundooNotes\obj\Debug\net6.0\ref\FundooNotes.dll
+D:\BRIDGELABZ\FundooNotes\FundooNotes\bin\Debug\net6.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll

@@ -11,34 +11,18 @@ using System.Threading.Tasks;
 
 namespace BusinessLayer.Service
 {
-    public class UserBL : IUserBL
+    public class TokenBL : ITokenBL
     {
-        private readonly IUserRL _userRL;
-
-        public UserBL(IUserRL userRL)
-        {
-            this._userRL = userRL;
+        private readonly ITokenRL _tokenRL;
+        public TokenBL(ITokenRL tokenRL) 
+        { 
+            _tokenRL = tokenRL;
         }
-
-        public UserEntity RegisterUser(UserModel model)
+        public string AuthenticateUser(LoginML login)
         {
             try
             {
-                return _userRL.RegisterUser(model);
-            }
-            catch(CustomizeException ex)
-            {
-                throw;
-            }
-            
-        }
-
-        
-        public List<UserEntity> GetUsers()
-        {
-            try
-            {
-                return _userRL.GetUsers();
+                return _tokenRL.AuthenticateUser(login);
             }
             catch (CustomizeException ex)
             {
@@ -46,5 +30,16 @@ namespace BusinessLayer.Service
             }
         }
 
+        public string GenerateToken(UserEntity user)
+        {
+            try
+            {
+                return _tokenRL.GenerateToken(user);
+            }
+            catch (CustomizeException ex)
+            {
+                throw;
+            }
+        }
     }
 }

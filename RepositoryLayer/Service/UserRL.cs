@@ -95,23 +95,12 @@ namespace RepositoryLayer.Service
         //    {
         //        throw new CustomizeException("User Doesnt Exists !! Please Register First");
         //    }
-        //}
+        //
 
-        public UserEntity Login(LoginML login)
+        public List<UserEntity> GetUsers()
         {
-            var useremail = fundooContext.Users.FirstOrDefault(x => x.email == login.email);
-            //var password = HashingPassword.EncryptPassWord(login.password);
-            var password = HashingPassword.DecryptPassWord(useremail.password);
-            if (useremail != null && password == login.password)
-            {
-                UserEntity userEntity = fundooContext.Users.FirstOrDefault(x => x.email == login.email);
-                return userEntity;
-            }
-            else
-            {
-                throw new CustomizeException("User Doesnt Exists !! Please Register First");
-            }
+            var result = fundooContext.Users.ToList();
+            return result;
         }
-
     }
 }

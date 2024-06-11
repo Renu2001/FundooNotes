@@ -11,8 +11,8 @@ using RepositoryLayer.Context;
 namespace RepositoryLayer.Migrations
 {
     [DbContext(typeof(FundooContext))]
-    [Migration("20240606095219_CreateTable")]
-    partial class CreateTable
+    [Migration("20240611055725_removeRoles")]
+    partial class removeRoles
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

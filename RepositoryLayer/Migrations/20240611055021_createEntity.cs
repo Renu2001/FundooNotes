@@ -4,7 +4,7 @@
 
 namespace RepositoryLayer.Migrations
 {
-    public partial class CreateTable : Migration
+    public partial class createEntity : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -17,7 +17,8 @@ namespace RepositoryLayer.Migrations
                     firstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     lastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     email = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    password = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    password = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    role = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
