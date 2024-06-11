@@ -13,6 +13,7 @@ namespace RepositoryLayer.Context
         public FundooContext(DbContextOptions options) : base(options) { }
 
         public DbSet<UserEntity> Users { get; set; }
+        public DbSet<NoteEntity> Notes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

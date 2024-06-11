@@ -40,6 +40,9 @@ builder.Services.AddScoped<IUserRL, UserRL>();
 builder.Services.AddScoped<IUserBL, UserBL>();
 builder.Services.AddScoped<ITokenRL, TokenRL>();
 builder.Services.AddScoped<ITokenBL, TokenBL>();
+builder.Services.AddScoped<INoteRL, NoteRL>();
+builder.Services.AddScoped<INoteBL, NoteBL>();
+
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
