@@ -10,10 +10,12 @@ namespace RepositoryLayer.Interface
 {
     public interface INoteRL
     {
+        NoteEntity ArchieveById(int id);
         public NoteEntity CreateNote(NoteModel noteModel);
-        NoteEntity DeleteNoteById(int id);
-        List<NoteEntity> GetAllNote();
+        public NoteEntity DeleteNoteById(int id);
+        public IEnumerable<NoteEntity> GetAllNote();
         public NoteEntity GetNoteById(int id);
-        NoteEntity UpdateById(int id, NoteModel model);
+        NoteEntity TrashById(int id);
+        public NoteEntity UpdateById(int id, NoteModel model);
     }
 }

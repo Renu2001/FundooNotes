@@ -19,8 +19,7 @@ namespace RepositoryLayer.Entity
 
         [Required]
         public string Description { get; set; }
-
-        public bool IsDeleted { get; set; }
-        public bool IsArchived { get; set; }
+        public bool IsTrashed { get; set; } = false;
+        public bool IsArchived { get; set; } = false;
     }
 }

@@ -9,9 +9,9 @@ namespace ModelLayer
 {
     public class NoteModel
     {
-        public string Title { get; set; }
-        public string Description { get; set; }
-        public bool IsDeleted { get; set; }
-        public bool IsArchived { get; set; }
+        [Required]
+        public string? Title { get; set; }
+        [Required]  
+        public string? Description { get; set; }
     }
 }

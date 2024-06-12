@@ -26,7 +26,7 @@ namespace BusinessLayer.Service
             {
                 return _userRL.RegisterUser(model);
             }
-            catch(CustomizeException ex)
+            catch
             {
                 throw;
             }
@@ -34,13 +34,13 @@ namespace BusinessLayer.Service
         }
 
         
-        public List<UserEntity> GetUsers()
+        public IEnumerable<UserEntity> GetUsers()
         {
             try
             {
                 return _userRL.GetUsers();
             }
-            catch (CustomizeException ex)
+            catch 
             {
                 throw;
             }

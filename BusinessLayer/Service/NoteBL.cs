@@ -18,13 +18,26 @@ namespace BusinessLayer.Service
         {
             _noteRL = noteRL;
         }
+
+        public NoteEntity ArchieveById(int id)
+        {
+            try
+            {
+                return _noteRL.ArchieveById(id);
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
         public NoteEntity CreateNote(NoteModel noteModel)
         {
             try
             {
                 return _noteRL.CreateNote(noteModel);
             }
-            catch(CustomizeException ex)
+            catch
             {
                 throw;
             }
@@ -36,19 +49,19 @@ namespace BusinessLayer.Service
             {
                 return _noteRL.DeleteNoteById(id);
             }
-            catch (CustomizeException ex)
+            catch
             {
                 throw;
             }
         }
 
-        public List<NoteEntity> GetAllNote()
+        public IEnumerable<NoteEntity> GetAllNote()
         {
             try
             {
                 return _noteRL.GetAllNote();
             }
-            catch (CustomizeException ex)
+            catch
             {
                 throw;
             }
@@ -60,10 +73,23 @@ namespace BusinessLayer.Service
             {
                 return _noteRL.GetNoteById(id);
             }
-            catch (CustomizeException ex)
+            catch
             {
                 throw;
             }
+        }
+
+        public NoteEntity TrashById(int id)
+        {
+            try
+            {
+                return _noteRL.TrashById(id);
+            }
+            catch
+            {
+                throw;
+            }
+
         }
 
         public NoteEntity UpdateById(int id, NoteModel model)
@@ -72,7 +98,7 @@ namespace BusinessLayer.Service
             {
                 return _noteRL.UpdateById(id, model);
             }
-            catch (CustomizeException ex)
+            catch
             {
                 throw;
             }

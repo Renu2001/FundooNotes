@@ -24,7 +24,7 @@ namespace BusinessLayer.Service
             {
                 return _tokenRL.AuthenticateUser(login);
             }
-            catch (CustomizeException ex)
+            catch
             {
                 throw;
             }
@@ -36,7 +36,7 @@ namespace BusinessLayer.Service
             {
                 return _tokenRL.GenerateToken(user);
             }
-            catch (CustomizeException ex)
+            catch
             {
                 throw;
             }

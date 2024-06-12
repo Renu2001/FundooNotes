@@ -60,14 +60,14 @@ namespace RepositoryLayer.Service
 
             var password = HashingPassword.EncryptPassWord(user.password);
             userEntity.password = password;
-            fundooContext.Users.Add(userEntity);
+            fundooContext.Users?.Add(userEntity);
             try
             {
                 fundooContext.SaveChanges();
             }
             catch (Exception ex)
             {
-                throw new CustomizeException("Email Already Exists");
+                throw new CustomizeException(ex.Message);
             }
             return userEntity;
 
@@ -97,9 +97,9 @@ namespace RepositoryLayer.Service
         //    }
         //
 
-        public List<UserEntity> GetUsers()
+        public IEnumerable<UserEntity> GetUsers()
         {
-            var result = fundooContext.Users.ToList();
+            var result = fundooContext.Users?.ToList();
             return result;
         }
     }

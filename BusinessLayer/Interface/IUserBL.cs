@@ -11,7 +11,7 @@ namespace BusinessLayer.Interface
     public interface IUserBL
     {
         public UserEntity RegisterUser(UserModel model);
-        public List<UserEntity> GetUsers();
+        public IEnumerable<UserEntity> GetUsers();
 
     }
 }

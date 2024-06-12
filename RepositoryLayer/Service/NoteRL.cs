@@ -19,16 +19,39 @@ namespace RepositoryLayer.Service
             this.fundooContext = fundooContext;
         }
 
+        public NoteEntity ArchieveById(int id)
+        {
+            var result = fundooContext.Notes?.Find(id);
+            if (result != null && result.IsTrashed != true)
+            {
+                try
+                {
+                        result.IsArchived = !result.IsArchived;
+                        fundooContext.Notes?.Update(result);
+                        fundooContext.SaveChanges();
+                        return result;
+                    
+                }
+                catch (Exception ex)
+                {
+                    throw new CustomizeException(ex.Message);
+                }
+            }
+            else
+            {
+                throw new CustomizeException("Cannot be Archive!!!");
+            }
+
+        }
+
         public NoteEntity CreateNote(NoteModel noteModel)
         {
-            NoteEntity noteEntity = new NoteEntity();
+            NoteEntity noteEntity = new NoteEntity() { };
             noteEntity.Title = noteModel.Title;
             noteEntity.Description = noteModel.Description;
-            noteEntity.IsArchived = noteModel.IsArchived;
-            noteEntity.IsDeleted = noteModel.IsDeleted;
             try
             {
-                fundooContext.Notes.Add(noteEntity);
+                fundooContext.Notes?.Add(noteEntity);
                 fundooContext.SaveChanges();
                 return noteEntity;
             }
@@ -40,12 +63,12 @@ namespace RepositoryLayer.Service
 
         public NoteEntity DeleteNoteById(int id)
         {
-            var result = fundooContext.Notes.Find(id);
+            var result = fundooContext.Notes?.Find(id);
             if (result != null)
             {
                 try
                 {
-                    fundooContext.Notes.Remove(result);
+                    fundooContext.Notes?.Remove(result);
                     fundooContext.SaveChanges();
                     return result;
                 }
@@ -62,11 +85,16 @@ namespace RepositoryLayer.Service
             
         }
 
-        public List<NoteEntity> GetAllNote()
+        public IEnumerable<NoteEntity> GetAllNote()
         {
-            var result = fundooContext.Notes.ToList();
+            var result = fundooContext.Notes?.ToList();
             if(result != null)
             {
+                foreach (var note in result)
+                {
+                    if (note.IsTrashed || note.IsArchived)
+                        result.Remove(note);
+                }
                 return result;
             }
             else
@@ -78,7 +106,7 @@ namespace RepositoryLayer.Service
 
         public NoteEntity GetNoteById(int id)
         {
-            var entity = fundooContext.Notes.Find(id);
+            var entity = fundooContext.Notes?.Find(id);
             if (entity != null)
             {
                 return entity;
@@ -90,18 +118,29 @@ namespace RepositoryLayer.Service
             
         }
 
+        public NoteEntity TrashById(int id)
+        {
+            var result = fundooContext.Notes?.Find(id);
+            if (result != null)
+            {
+                result.IsTrashed = !result.IsTrashed;
+                result.IsArchived = !result.IsArchived;
+                fundooContext.Notes?.Update(result);
+                fundooContext.SaveChanges();
+            }
+            return result;
+        }
+
         public NoteEntity UpdateById(int id, NoteModel model)
         {
-            var entity = fundooContext.Notes.Find(id);
+            var entity = fundooContext.Notes?.Find(id);
             if (entity != null)
             {
                 entity.Title = model.Title;
                 entity.Description = model.Description;
-                entity.IsArchived = model.IsArchived;
-                entity.IsDeleted = model.IsDeleted;
                 try
                 {
-                    fundooContext.Notes.Update(entity);
+                    fundooContext.Notes?.Update(entity);
                     fundooContext.SaveChanges();
                     return entity;
                 }

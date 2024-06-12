@@ -10,10 +10,12 @@ namespace BusinessLayer.Interface
 {
     public interface INoteBL
     {
+        public NoteEntity ArchieveById(int id);
         public NoteEntity CreateNote(NoteModel noteModel);
         public NoteEntity DeleteNoteById(int id);
-        public List<NoteEntity> GetAllNote();
+        public IEnumerable<NoteEntity> GetAllNote();
         public NoteEntity GetNoteById(int id);
+        public NoteEntity TrashById(int id);
         public NoteEntity UpdateById(int id, NoteModel model);
     }
 }

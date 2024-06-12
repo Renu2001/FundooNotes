@@ -12,7 +12,7 @@ namespace RepositoryLayer.Interface
     {
         public UserEntity RegisterUser(UserModel user);
        
-        public List<UserEntity> GetUsers();
+        public IEnumerable<UserEntity> GetUsers();
 
     }
 }

@@ -19,7 +19,7 @@ namespace FundooNotes.Controllers
             _noteBL = noteBL;
         }
 
-        [Authorize]
+        //[Authorize]
         [HttpPost("CreateNote")]
         public IActionResult CreateNote(NoteModel model)
         {
@@ -42,13 +42,13 @@ namespace FundooNotes.Controllers
                     Success = "false",
                     Message = ex.Message
                 };
-                return StatusCode(400, mod);
+                return StatusCode(404, mod);
 
             }
-            return StatusCode(200, mod);
+            return StatusCode(201, mod);
         }
 
-        [Authorize]
+        //[Authorize]
         [HttpGet("GetAll")]
         public IActionResult GetAllNote() 
         {
@@ -72,15 +72,15 @@ namespace FundooNotes.Controllers
                     Success = "false",
                     Message = ex.Message
                 };
-                return StatusCode(400, mod);
+                return StatusCode(404, mod);
 
             }
             return StatusCode(200, mod);
 
         }
 
-        [Authorize]
-        [HttpGet("GetById")]
+        //[Authorize]
+        [HttpGet("{id:int}")]
         public IActionResult GetNoteById(int id)
         {
             try
@@ -103,14 +103,14 @@ namespace FundooNotes.Controllers
                     Success = "false",
                     Message = ex.Message
                 };
-                return StatusCode(400, mod);
+                return StatusCode(404, mod);
 
             }
             return StatusCode(200, mod);
 
         }
 
-        [Authorize] 
+        //[Authorize] 
         [HttpDelete("DeleteByid")]
         public IActionResult DeleteNoteById(int id)
         {
@@ -134,13 +134,13 @@ namespace FundooNotes.Controllers
                     Success = "false",
                     Message = ex.Message
                 };
-                return StatusCode(400, mod);
+                return StatusCode(404, mod);
 
             }
             return StatusCode(200, mod);
         }
 
-        [Authorize]
+        //[Authorize]
         [HttpPut("UpdateByid")]
         public IActionResult UpdateById(int id,NoteModel model)
         {
@@ -164,7 +164,65 @@ namespace FundooNotes.Controllers
                     Success = "false",
                     Message = ex.Message
                 };
-                return StatusCode(400, mod);
+                return StatusCode(404, mod);
+
+            }
+            return StatusCode(200, mod);
+        }
+
+        [HttpPost("Archive")]
+        public IActionResult ArchiveById(int id)
+        {
+            try
+            {
+                var result = _noteBL.ArchieveById(id);
+                if (result != null)
+                {
+                    mod = new ResponseModel()
+                    {
+                        Success = "true",
+                        Message = "Archived",
+                        Data = result
+                    };
+                }
+            }
+            catch (CustomizeException ex)
+            {
+                mod = new ResponseModel()
+                {
+                    Success = "false",
+                    Message = ex.Message
+                };
+                return StatusCode(404, mod);
+
+            }
+            return StatusCode(200, mod);
+        }
+
+        [HttpPost("Delete")]
+        public IActionResult TrashById(int id)
+        {
+            try
+            {
+                var result = _noteBL.TrashById(id);
+                if (result != null)
+                {
+                    mod = new ResponseModel()
+                    {
+                        Success = "true",
+                        Message = "Deleted",
+                        Data = result
+                    };
+                }
+            }
+            catch (CustomizeException ex)
+            {
+                mod = new ResponseModel()
+                {
+                    Success = "false",
+                    Message = ex.Message
+                };
+                return StatusCode(404, mod);
 
             }
             return StatusCode(200, mod);
