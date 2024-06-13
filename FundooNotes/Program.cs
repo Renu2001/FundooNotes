@@ -6,6 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 using RepositoryLayer.Context;
 using RepositoryLayer.Interface;
 using RepositoryLayer.Service;
+using RepositoryLayer.Utility;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -38,11 +39,10 @@ builder.Services.AddDbContext<FundooContext>(options =>
 
 builder.Services.AddScoped<IUserRL, UserRL>();
 builder.Services.AddScoped<IUserBL, UserBL>();
-builder.Services.AddScoped<ITokenRL, TokenRL>();
-builder.Services.AddScoped<ITokenBL, TokenBL>();
 builder.Services.AddScoped<INoteRL, NoteRL>();
 builder.Services.AddScoped<INoteBL, NoteBL>();
-
+builder.Services.AddScoped<Token>();
+builder.Services.AddScoped<Email>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

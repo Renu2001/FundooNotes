@@ -11,7 +11,6 @@ namespace BusinessLayer.Interface
     public interface IUserBL
     {
         public UserEntity RegisterUser(UserModel model);
-        public IEnumerable<UserEntity> GetUsers();
-
+        void ResetPassword(string email, string newPassword);
     }
 }

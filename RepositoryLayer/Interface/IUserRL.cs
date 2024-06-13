@@ -11,8 +11,6 @@ namespace RepositoryLayer.Interface
     public interface IUserRL
     {
         public UserEntity RegisterUser(UserModel user);
-       
-        public IEnumerable<UserEntity> GetUsers();
-
+        void ResetPassword(string email, string newPassword);
     }
 }

@@ -71,3 +71,9 @@ D:\BRIDGELABZ\FundooNotes\FundooNotes\obj\Debug\net6.0\FundooNotes.pdb
 D:\BRIDGELABZ\FundooNotes\FundooNotes\obj\Debug\net6.0\FundooNotes.genruntimeconfig.cache
 D:\BRIDGELABZ\FundooNotes\FundooNotes\obj\Debug\net6.0\ref\FundooNotes.dll
 D:\BRIDGELABZ\FundooNotes\FundooNotes\bin\Debug\net6.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+D:\BRIDGELABZ\FundooNotes\FundooNotes\bin\Debug\net6.0\BouncyCastle.Cryptography.dll
+D:\BRIDGELABZ\FundooNotes\FundooNotes\bin\Debug\net6.0\MailKit.dll
+D:\BRIDGELABZ\FundooNotes\FundooNotes\bin\Debug\net6.0\MimeKit.dll
+D:\BRIDGELABZ\FundooNotes\FundooNotes\bin\Debug\net6.0\System.Formats.Asn1.dll
+D:\BRIDGELABZ\FundooNotes\FundooNotes\bin\Debug\net6.0\System.Security.Cryptography.Pkcs.dll
+D:\BRIDGELABZ\FundooNotes\FundooNotes\bin\Debug\net6.0\runtimes\win\lib\net6.0\System.Security.Cryptography.Pkcs.dll

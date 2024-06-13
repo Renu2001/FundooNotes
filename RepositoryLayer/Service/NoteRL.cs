@@ -90,11 +90,7 @@ namespace RepositoryLayer.Service
             var result = fundooContext.Notes?.ToList();
             if(result != null)
             {
-                foreach (var note in result)
-                {
-                    if (note.IsTrashed || note.IsArchived)
-                        result.Remove(note);
-                }
+                result.RemoveAll(note => note.IsTrashed || note.IsArchived);
                 return result;
             }
             else

@@ -1,4 +1,5 @@
 ﻿using BusinessLayer.Interface;
+using Microsoft.AspNetCore.Mvc;
 using ModelLayer;
 using RepositoryLayer.CustomException;
 using RepositoryLayer.Entity;
@@ -33,18 +34,16 @@ namespace BusinessLayer.Service
             
         }
 
-        
-        public IEnumerable<UserEntity> GetUsers()
+        public void ResetPassword(string email, string newPassword)
         {
             try
             {
-                return _userRL.GetUsers();
+               _userRL.ResetPassword(email, newPassword);
             }
-            catch 
+            catch
             {
                 throw;
             }
         }
-
     }
 }

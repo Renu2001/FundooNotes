@@ -1,4 +1,6 @@
-﻿using ModelLayer;
+﻿using Microsoft.AspNetCore.Authorization;
+using ModelLayer;
+using Org.BouncyCastle.Asn1.Ocsp;
 using RepositoryLayer.Context;
 using RepositoryLayer.CustomException;
 using RepositoryLayer.Entity;
@@ -7,6 +9,7 @@ using RepositoryLayer.Interface;
 using RepositoryLayer.Utility;
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -97,10 +100,20 @@ namespace RepositoryLayer.Service
         //    }
         //
 
-        public IEnumerable<UserEntity> GetUsers()
+        
+        public void ResetPassword(string email, string newPassword)
         {
-            var result = fundooContext.Users?.ToList();
-            return result;
+                var result = fundooContext.Users.FirstOrDefault(x => x.email == email);
+                if (result != null)
+                {
+                    result.password = HashingPassword.EncryptPassWord(newPassword);
+                    fundooContext.Users.Update(result);
+                    fundooContext.SaveChanges();
+                }
+                else
+                {
+                    throw new CustomizeException("Email is not valid");
+                }
         }
     }
 }
