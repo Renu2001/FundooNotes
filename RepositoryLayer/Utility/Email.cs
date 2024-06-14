@@ -11,16 +11,20 @@ using RepositoryLayer.Context;
 using ModelLayer;
 using RepositoryLayer.CustomException;
 using RepositoryLayer.Utility;
+using Microsoft.Extensions.Configuration;
 namespace RepositoryLayer.Utility
 {
     public class Email
     {
         private readonly FundooContext fundooContext;
         private readonly Token _token;
-        public Email(FundooContext fundooContext, Token token)
+        private readonly IConfiguration _config;
+
+        public Email(FundooContext fundooContext, Token token, IConfiguration config)
         {
             this.fundooContext = fundooContext;
             this._token = token;
+            _config = config;
         }
 
         public string SendMail(string emailId)
@@ -59,8 +63,8 @@ namespace RepositoryLayer.Utility
                         </html>"
             };
             using var smtp = new SmtpClient();
-            smtp.Connect("smtp.gmail.com", 587, SecureSocketOptions.StartTls);
-            smtp.Authenticate("anonymous.u2003@gmail.com", "dopb jonq ldin cozg");
+            smtp.Connect(_config["Email:Host"], 587, SecureSocketOptions.StartTls);
+            smtp.Authenticate(_config["Email:UserName"], _config["Email:Password"]);
             smtp.Send(email);
             smtp.Disconnect(true);
             return token;
