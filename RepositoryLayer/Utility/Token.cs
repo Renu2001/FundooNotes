@@ -27,9 +27,8 @@ namespace RepositoryLayer.Utility
         public string AuthenticateUser(LoginML login)
         {
             var useremail = fundooContext.Users.FirstOrDefault(x => x.email == login.email);
-            //var password = HashingPassword.EncryptPassWord(login.password);
-            var password = HashingPassword.DecryptPassWord(useremail.password);
-            if (useremail != null && password == login.password)
+            var password = HashingPassword.VerifyPassword(useremail.password,login.password);
+            if (useremail != null && password == true)
             {
 
                 UserEntity userEntity = fundooContext.Users.FirstOrDefault(x => x.email == login.email);

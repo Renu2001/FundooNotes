@@ -1,4 +1,5 @@
 ﻿using ModelLayer;
+using Org.BouncyCastle.Crypto.Generators;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,15 +11,14 @@ namespace RepositoryLayer.Utility
 {
     public class HashingPassword
     {
-        public static string EncryptPassWord(string encryptpassword)
+        public static string HashPassword(string password)
         {
-            var text = System.Text.Encoding.UTF8.GetBytes(encryptpassword);
-            return System.Convert.ToBase64String(text);
+            return BCrypt.Net.BCrypt.HashPassword(password);
         }
-        public static string DecryptPassWord(string decryptPassword)
+
+        public static bool VerifyPassword(string password, string hashedPassword)
         {
-            var text1 = System.Convert.FromBase64String(decryptPassword); ;
-            return System.Text.Encoding.UTF8.GetString(text1);
+            return BCrypt.Net.BCrypt.Verify(password, hashedPassword);
         }
     }
 }

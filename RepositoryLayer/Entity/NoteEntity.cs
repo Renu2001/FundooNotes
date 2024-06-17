@@ -21,5 +21,8 @@ namespace RepositoryLayer.Entity
         public string Description { get; set; }
         public bool IsTrashed { get; set; } = false;
         public bool IsArchived { get; set; } = false;
+
+        public ICollection<NoteLabelEntity> NoteLabel { get; set; } = new List<NoteLabelEntity>();
+
     }
 }

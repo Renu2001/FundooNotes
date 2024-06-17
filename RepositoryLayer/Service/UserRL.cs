@@ -61,7 +61,7 @@ namespace RepositoryLayer.Service
             userEntity.email = user.email;
 
 
-            var password = HashingPassword.EncryptPassWord(user.password);
+            var password = HashingPassword.HashPassword(user.password);
             userEntity.password = password;
             fundooContext.Users?.Add(userEntity);
             try
@@ -106,7 +106,7 @@ namespace RepositoryLayer.Service
                 var result = fundooContext.Users.FirstOrDefault(x => x.email == email);
                 if (result != null)
                 {
-                    result.password = HashingPassword.EncryptPassWord(newPassword);
+                    result.password = HashingPassword.HashPassword(newPassword);
                     fundooContext.Users.Update(result);
                     fundooContext.SaveChanges();
                 }
