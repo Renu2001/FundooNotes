@@ -10,7 +10,7 @@ namespace BusinessLayer.Interface
 {
     public interface ILabelBL
     {
-        LabelEntity AddLabel(LabelModel model, int id);
+        LabelEntity AddLabel(LabelModel model);
         LabelEntity DeleteLabel(int id);
         List<LabelEntity> GetAllLabels();
         LabelEntity UpdateLabel(int id,LabelModel model);

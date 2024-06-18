@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ModelLayer;
 using RepositoryLayer.CustomException;
+using RepositoryLayer.Entity;
 using static Org.BouncyCastle.Crypto.Engines.SM2Engine;
 
 namespace FundooNotes.Controllers
@@ -18,8 +19,36 @@ namespace FundooNotes.Controllers
             _notelabelBL = notelabelBL;
         }
 
-        
-        [HttpGet("bylabel")]
+        [HttpGet("GetAllLabelsByNotes")]
+        public IActionResult GetAllLabelsAndNotesFromAllNotes()
+        {
+            try
+            {
+                var result = _notelabelBL.GetAllLabelsAndNotesFromAllNotes();
+                if (result != null)
+                {
+                    mod = new ResponseModel()
+                    {
+                        Success = "true",
+                        Message = "All Labels",
+                        Data = result
+                    };
+                }
+            }
+            catch (CustomizeException ex)
+            {
+                mod = new ResponseModel()
+                {
+                    Success = "false",
+                    Message = ex.Message
+                };
+                return StatusCode(404, mod);
+
+            }
+            return StatusCode(200, mod);
+        }
+
+        [HttpGet("GetNotesByLabel")]
         public IActionResult GetAllNotesFromLabel(int labelId)
         {
             try
@@ -48,12 +77,12 @@ namespace FundooNotes.Controllers
             return StatusCode(200, mod);
         }
     
-        [HttpGet("alllabels")]
-        public IActionResult GetAllLabelsFromNotes()
+        [HttpGet("GetLabelsByNotes")]
+        public IActionResult GetAllLabelsFromNotes(int noteid)
         {
         try
         {
-            var result = _notelabelBL.GetAllLabelsFromNotes();
+            var result = _notelabelBL.GetAllLabelsFromNotes(noteid);
             if (result != null)
             {
                 mod = new ResponseModel()
@@ -76,7 +105,7 @@ namespace FundooNotes.Controllers
         }
         return StatusCode(200, mod);
     }
-        [HttpPost]
+        [HttpPost("AddLabelsToNotes")]
         public IActionResult AddLabelsToNotes(int labelId, int noteId)
         {
             try
@@ -99,12 +128,12 @@ namespace FundooNotes.Controllers
                     Success = "false",
                     Message = ex.Message
                 };
-                return StatusCode(404, mod);
+                return StatusCode(400, mod);
 
             }
             return StatusCode(200, mod);
         }
-        [HttpDelete]
+        [HttpDelete("RemoveLabelFromNote")]
         public IActionResult RemoveLabelsFromNotes(int labelId, int noteId)
         {
             try

@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Text.Json.Serialization;
 
 namespace RepositoryLayer.Entity
 {
@@ -21,8 +22,10 @@ namespace RepositoryLayer.Entity
         public string Description { get; set; }
         public bool IsTrashed { get; set; } = false;
         public bool IsArchived { get; set; } = false;
-
-        public ICollection<NoteLabelEntity> NoteLabel { get; set; } = new List<NoteLabelEntity>();
+        [JsonIgnore]
+        public ICollection<CollaboratorEntity>? Collabarators { get; set; }
+        [JsonIgnore]
+        public ICollection<NoteLabelEntity> NoteLabel { get; set; } 
 
     }
 }

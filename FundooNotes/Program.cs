@@ -9,6 +9,7 @@ using RepositoryLayer.Service;
 using RepositoryLayer.Utility;
 using System.Text;
 
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -32,11 +33,7 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-builder.Services.AddControllers().AddNewtonsoftJson(options=>
-{
-    options.SerializerSettings.ReferenceLoopHandling = 
-    Newtonsoft.Json.ReferenceLoopHandling.Ignore;
-});
+builder.Services.AddControllers();
 builder.Services.AddDbContext<FundooContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("Default"));
@@ -50,7 +47,8 @@ builder.Services.AddScoped<ILabelRL, LabelRL>();
 builder.Services.AddScoped<ILabelBL, LabelBL>();
 builder.Services.AddScoped<INoteLabelRL, NoteLabelRL>();
 builder.Services.AddScoped<INoteLabelBL, NoteLabelBL>();
-builder.Services.AddScoped<Token>();
+builder.Services.AddScoped<ICollaboratorRL, CollaboratorRL>();
+builder.Services.AddScoped<ICollaboratorBL, CollaboratorBL>();
 builder.Services.AddScoped<Token>();
 builder.Services.AddScoped<Email>();
 

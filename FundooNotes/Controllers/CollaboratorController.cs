@@ -2,35 +2,33 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ModelLayer;
-using RepositoryLayer.Context;
 using RepositoryLayer.CustomException;
-using RepositoryLayer.Entity;
 
 namespace FundooNotes.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class LabelController : ControllerBase
+    public class CollaboratorController : ControllerBase
     {
-        private readonly ILabelBL _labelBL;
+        private readonly ICollaboratorBL _collaboratorBL;
         public ResponseModel mod;
-        public LabelController(ILabelBL labelBL)
+        public CollaboratorController(ICollaboratorBL collaboratorBL)
         {
-            _labelBL = labelBL;
+            _collaboratorBL = collaboratorBL;
         }
 
-        [HttpGet("GetAllLabels")]
-        public IActionResult GetAllLabels()
+        [HttpGet]
+        public IActionResult GetCollaboratorById(int noteId)
         {
             try
             {
-                var result = _labelBL.GetAllLabels();
+                var result = _collaboratorBL.GetCollaboratorById(noteId);
                 if (result != null)
                 {
                     mod = new ResponseModel()
                     {
                         Success = "true",
-                        Message = "Labels",
+                        Message = "All Notes",
                         Data = result
                     };
                 }
@@ -48,47 +46,18 @@ namespace FundooNotes.Controllers
             return StatusCode(200, mod);
         }
 
-        [HttpPost("AddLabel")]
-        public IActionResult AddLabel(LabelModel model)
+        [HttpPost]
+        public IActionResult AddCollaborator(CollaboratorModel model)
         {
             try
             {
-                var result = _labelBL.AddLabel(model);
+                var result = _collaboratorBL.AddCollaborator(model);
                 if (result != null)
                 {
                     mod = new ResponseModel()
                     {
                         Success = "true",
-                        Message = "Label Created",
-                        Data = result
-                    };
-                }
-            }
-            catch (CustomizeException ex)
-            {
-                mod = new ResponseModel()
-                {
-                    Success = "false",
-                    Message = ex.Message
-                };
-                return StatusCode(400, mod);
-
-            }
-            return StatusCode(201, mod);
-        }
-
-        [HttpDelete("DeleteLabel")]
-        public IActionResult DeleteLabel(int id)
-        {
-            try
-            {
-                var result = _labelBL.DeleteLabel(id);
-                if (result != null)
-                {
-                    mod = new ResponseModel()
-                    {
-                        Success = "true",
-                        Message = "Label Deleted",
+                        Message = "All Notes",
                         Data = result
                     };
                 }
@@ -105,18 +74,19 @@ namespace FundooNotes.Controllers
             }
             return StatusCode(200, mod);
         }
-        [HttpPut("UpdateLabel")]
-        public IActionResult UpdateLabel(int id, LabelModel model)
+
+        [HttpDelete]
+        public IActionResult DeleteCollaborator(int noteId, string email)
         {
             try
             {
-                var result = _labelBL.UpdateLabel(id, model);
+                var result = _collaboratorBL.DeleteCollaborator(noteId,email);
                 if (result != null)
                 {
                     mod = new ResponseModel()
                     {
                         Success = "true",
-                        Message = "Label Updated",
+                        Message = "All Notes",
                         Data = result
                     };
                 }
@@ -132,6 +102,7 @@ namespace FundooNotes.Controllers
 
             }
             return StatusCode(200, mod);
+
         }
     }
 }

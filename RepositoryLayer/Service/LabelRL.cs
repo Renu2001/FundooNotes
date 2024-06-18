@@ -18,19 +18,27 @@ namespace RepositoryLayer.Service
         {
             this.fundooContext = fundooContext;
         }
-        public LabelEntity AddLabel(LabelModel model, int id)
+        public LabelEntity AddLabel(LabelModel model)
         {
             LabelEntity labelentity = new LabelEntity();
-            labelentity.LabelName = model.LabelName;
-            try
+            var result = fundooContext.Labels?.FirstOrDefault(x=>x.LabelName==model.LabelName);
+            if(result == null)
             {
-                fundooContext.Labels?.Add(labelentity);
-                fundooContext.SaveChanges();
-                return labelentity;
+                labelentity.LabelName = model.LabelName;
+                try
+                {
+                    fundooContext.Labels?.Add(labelentity);
+                    fundooContext.SaveChanges();
+                    return labelentity;
+                }
+                catch (Exception ex)
+                {
+                    throw new CustomizeException(ex.Message);
+                }
             }
-            catch (Exception ex)
+            else
             {
-                throw new CustomizeException(ex.Message);
+                throw new CustomizeException("Label Already Exists ");
             }
         }
 

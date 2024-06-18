@@ -22,6 +22,32 @@ namespace RepositoryLayer.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
+            modelBuilder.Entity("RepositoryLayer.Entity.CollaboratorEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int?>("NotesId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NotesId");
+
+                    b.HasIndex("Email", "NotesId")
+                        .IsUnique()
+                        .HasFilter("[NotesId] IS NOT NULL");
+
+                    b.ToTable("Collaborators");
+                });
+
             modelBuilder.Entity("RepositoryLayer.Entity.LabelEntity", b =>
                 {
                     b.Property<int>("LabelId")
@@ -113,6 +139,15 @@ namespace RepositoryLayer.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("RepositoryLayer.Entity.CollaboratorEntity", b =>
+                {
+                    b.HasOne("RepositoryLayer.Entity.NoteEntity", "Notes")
+                        .WithMany("Collabarators")
+                        .HasForeignKey("NotesId");
+
+                    b.Navigation("Notes");
+                });
+
             modelBuilder.Entity("RepositoryLayer.Entity.NoteLabelEntity", b =>
                 {
                     b.HasOne("RepositoryLayer.Entity.LabelEntity", "Labels")
@@ -139,6 +174,8 @@ namespace RepositoryLayer.Migrations
 
             modelBuilder.Entity("RepositoryLayer.Entity.NoteEntity", b =>
                 {
+                    b.Navigation("Collabarators");
+
                     b.Navigation("NoteLabel");
                 });
 #pragma warning restore 612, 618

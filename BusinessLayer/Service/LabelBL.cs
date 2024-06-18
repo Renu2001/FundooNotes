@@ -18,11 +18,11 @@ namespace BusinessLayer.Service
         {
             _labelRL = labelRL;
         }
-        public LabelEntity AddLabel(LabelModel model, int id)
+        public LabelEntity AddLabel(LabelModel model)
         {
             try
             {
-                return _labelRL.AddLabel(model,id);
+                return _labelRL.AddLabel(model);
             }
             catch
             {

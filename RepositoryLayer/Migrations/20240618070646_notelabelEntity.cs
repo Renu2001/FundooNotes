@@ -4,7 +4,7 @@
 
 namespace RepositoryLayer.Migrations
 {
-    public partial class label2 : Migration
+    public partial class notelabelEntity : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -54,6 +54,25 @@ namespace RepositoryLayer.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Collaborators",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Email = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    NotesId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Collaborators", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Collaborators_Notes_NotesId",
+                        column: x => x.NotesId,
+                        principalTable: "Notes",
+                        principalColumn: "NoteId");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "NoteLabel",
                 columns: table => new
                 {
@@ -78,6 +97,18 @@ namespace RepositoryLayer.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_Collaborators_Email_NotesId",
+                table: "Collaborators",
+                columns: new[] { "Email", "NotesId" },
+                unique: true,
+                filter: "[NotesId] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Collaborators_NotesId",
+                table: "Collaborators",
+                column: "NotesId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_NoteLabel_LabelId",
                 table: "NoteLabel",
                 column: "LabelId");
@@ -91,6 +122,9 @@ namespace RepositoryLayer.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "Collaborators");
+
             migrationBuilder.DropTable(
                 name: "NoteLabel");
 

@@ -1,24 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
-using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace RepositoryLayer.Entity
 {
-    public class LabelEntity
+    public class CollaboratorEntity
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int LabelId {  get; set; }
+        public int Id { get; set; }
 
         [Required]
-        public string LabelName { get; set; }
+        [EmailAddress]
+        public string Email { get; set; }
 
-        [JsonIgnore]
-        public ICollection<NoteLabelEntity> NoteLabel { get; set; } 
+        public int? NotesId { get; set; }
+        public NoteEntity? Notes { get; set; }
     }
+
 }
+    

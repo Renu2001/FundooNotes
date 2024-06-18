@@ -30,11 +30,11 @@ namespace BusinessLayer.Service
             }
         }
 
-        public IEnumerable<NoteLabelEntity> GetAllLabelsFromNotes()
+        public IEnumerable<object> GetAllLabelsAndNotesFromAllNotes()
         {
             try
             {
-                return _notelabelRL.GetAllLabelsFromNotes();
+                return _notelabelRL.GetAllLabelsAndNotesFromAllNotes();
             }
             catch
             {
@@ -42,7 +42,19 @@ namespace BusinessLayer.Service
             }
         }
 
-        public IEnumerable<NoteLabelEntity> GetAllNotesFromLabel(int labelId)
+        public IEnumerable<LabelEntity> GetAllLabelsFromNotes(int noteid)
+        {
+            try
+            {
+                return _notelabelRL.GetAllLabelsFromNotes(noteid);
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        public IEnumerable<NoteEntity> GetAllNotesFromLabel(int labelId)
         {
             try
             {

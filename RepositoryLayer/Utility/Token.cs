@@ -26,19 +26,21 @@ namespace RepositoryLayer.Utility
         }
         public string AuthenticateUser(LoginML login)
         {
-            var useremail = fundooContext.Users.FirstOrDefault(x => x.email == login.email);
-            var password = HashingPassword.VerifyPassword(useremail.password,login.password);
-            if (useremail != null && password == true)
-            {
+            
+                var user = fundooContext.Users.FirstOrDefault(x => x.email == login.email);
+                if (user == null)
+                {
+                    throw new CustomizeException("User does not exist. Please register first.");
+                }                
+                bool isPasswordValid = HashingPassword.VerifyPassword(login.password, user.password);
+                if (!isPasswordValid)
+                {
+                    throw new CustomizeException("Invalid password.");
+                }
 
-                UserEntity userEntity = fundooContext.Users.FirstOrDefault(x => x.email == login.email);
-                var token = GenerateToken(userEntity);
+                var token = GenerateToken(user);
                 return token;
-            }
-            else
-            {
-                throw new CustomizeException("User Doesnt Exists !! Please Register First");
-            }
+            
         }
 
         public string GenerateToken(UserEntity user)
