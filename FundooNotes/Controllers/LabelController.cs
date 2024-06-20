@@ -1,4 +1,5 @@
 ﻿using BusinessLayer.Interface;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ModelLayer;
@@ -8,6 +9,7 @@ using RepositoryLayer.Entity;
 
 namespace FundooNotes.Controllers
 {
+    [EnableCors("_myspecificPolicy2")]
     [Route("api/[controller]")]
     [ApiController]
     public class LabelController : ControllerBase
@@ -20,11 +22,11 @@ namespace FundooNotes.Controllers
         }
 
         [HttpGet("GetAllLabels")]
-        public IActionResult GetAllLabels()
+        public async Task<IActionResult> GetAllLabels()
         {
             try
             {
-                var result = _labelBL.GetAllLabels();
+                var result = await _labelBL.GetAllLabels();
                 if (result != null)
                 {
                     mod = new ResponseModel()
@@ -48,12 +50,13 @@ namespace FundooNotes.Controllers
             return StatusCode(200, mod);
         }
 
+        [DisableCors]
         [HttpPost("AddLabel")]
-        public IActionResult AddLabel(LabelModel model)
+        public async Task<IActionResult> AddLabel(LabelModel model)
         {
             try
             {
-                var result = _labelBL.AddLabel(model);
+                var result = await _labelBL.AddLabel(model);
                 if (result != null)
                 {
                     mod = new ResponseModel()
@@ -78,11 +81,11 @@ namespace FundooNotes.Controllers
         }
 
         [HttpDelete("DeleteLabel")]
-        public IActionResult DeleteLabel(int id)
+        public async Task<IActionResult> DeleteLabel(int id)
         {
             try
             {
-                var result = _labelBL.DeleteLabel(id);
+                var result = await _labelBL.DeleteLabel(id);
                 if (result != null)
                 {
                     mod = new ResponseModel()
@@ -106,11 +109,11 @@ namespace FundooNotes.Controllers
             return StatusCode(200, mod);
         }
         [HttpPut("UpdateLabel")]
-        public IActionResult UpdateLabel(int id, LabelModel model)
+        public async Task<IActionResult> UpdateLabel(int id, LabelModel model)
         {
             try
             {
-                var result = _labelBL.UpdateLabel(id, model);
+                var result = await _labelBL.UpdateLabel(id, model);
                 if (result != null)
                 {
                     mod = new ResponseModel()

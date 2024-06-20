@@ -18,11 +18,11 @@ namespace BusinessLayer.Service
         {
             _labelRL = labelRL;
         }
-        public LabelEntity AddLabel(LabelModel model)
+        public async Task<LabelEntity> AddLabel(LabelModel model)
         {
             try
             {
-                return _labelRL.AddLabel(model);
+                return  await _labelRL.AddLabel(model);
             }
             catch
             {
@@ -30,11 +30,11 @@ namespace BusinessLayer.Service
             }
         }
 
-        public LabelEntity DeleteLabel(int id)
+        public async Task<LabelEntity> DeleteLabel(int id)
         {
             try
             {
-                return _labelRL.DeleteLabel(id);
+                return await _labelRL.DeleteLabel(id);
             }
             catch
             {
@@ -42,11 +42,11 @@ namespace BusinessLayer.Service
             }
         }
 
-        public List<LabelEntity> GetAllLabels()
+        public async Task<List<LabelEntity>> GetAllLabels()
         {
             try
             {
-                return _labelRL.GetAllLabels();
+                return await _labelRL.GetAllLabels();
             }
             catch
             {
@@ -54,11 +54,11 @@ namespace BusinessLayer.Service
             }
         }
 
-        public LabelEntity UpdateLabel(int id ,LabelModel model)
+        public async Task<LabelEntity> UpdateLabel(int id ,LabelModel model)
         {
             try
             {
-                return _labelRL.UpdateLabel(id,model);
+                return await _labelRL.UpdateLabel(id,model);
             }
             catch
             {

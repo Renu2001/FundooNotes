@@ -1,4 +1,5 @@
-﻿using ModelLayer;
+﻿using Microsoft.EntityFrameworkCore;
+using ModelLayer;
 using RepositoryLayer.Context;
 using RepositoryLayer.CustomException;
 using RepositoryLayer.Entity;
@@ -18,18 +19,19 @@ namespace RepositoryLayer.Service
         {
             this.fundooContext = fundooContext;
         }
-        public LabelEntity AddLabel(LabelModel model)
+        public async Task<LabelEntity> AddLabel(LabelModel model)
         {
-            LabelEntity labelentity = new LabelEntity();
-            var result = fundooContext.Labels?.FirstOrDefault(x=>x.LabelName==model.LabelName);
-            if(result == null)
+            LabelEntity labelEntity = new LabelEntity();
+            var result = await fundooContext.Labels?.FirstOrDefaultAsync(x => x.LabelName == model.LabelName);
+
+            if (result == null)
             {
-                labelentity.LabelName = model.LabelName;
+                labelEntity.LabelName = model.LabelName;
                 try
                 {
-                    fundooContext.Labels?.Add(labelentity);
-                    fundooContext.SaveChanges();
-                    return labelentity;
+                    fundooContext.Labels?.Add(labelEntity);
+                    await fundooContext.SaveChangesAsync(); // Await the SaveChangesAsync call
+                    return labelEntity;
                 }
                 catch (Exception ex)
                 {
@@ -38,11 +40,11 @@ namespace RepositoryLayer.Service
             }
             else
             {
-                throw new CustomizeException("Label Already Exists ");
+                throw new CustomizeException("Label Already Exists");
             }
         }
 
-        public LabelEntity DeleteLabel(int id)
+        public async Task<LabelEntity> DeleteLabel(int id)
         {
             var result = fundooContext.Labels?.Find(id);
             if (result != null)
@@ -65,9 +67,9 @@ namespace RepositoryLayer.Service
             }
         }
 
-        public List<LabelEntity> GetAllLabels()
+        public async Task<List<LabelEntity>> GetAllLabels()
         {
-            var result = fundooContext.Labels?.ToList();
+            var result = await fundooContext.Labels?.ToListAsync();
             if (result != null)
             {
                 return result;
@@ -78,16 +80,16 @@ namespace RepositoryLayer.Service
             }
         }
 
-        public LabelEntity UpdateLabel(int id ,LabelModel model)
+        public async Task<LabelEntity> UpdateLabel(int id ,LabelModel model)
         {
-            var entity = fundooContext.Labels?.Find(id);
+            var entity =  await fundooContext.Labels.FindAsync(id);
             if (entity != null)
             {
                 entity.LabelName = model.LabelName;
                 try
                 {
-                    fundooContext.Labels?.Update(entity);
-                    fundooContext.SaveChanges();
+                    fundooContext.Labels.Update(entity);
+                    await fundooContext.SaveChangesAsync();
                     return entity;
                 }
                 catch (Exception ex)

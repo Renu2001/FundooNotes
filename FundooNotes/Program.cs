@@ -12,6 +12,35 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+var myspecificPolicy = "_myspecificPolicy";
+var myspecificPolicy2 = "_myspecificPolicy2";
+
+
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(
+        policy =>
+        {
+            policy.WithOrigins("http://google.com",
+                                      "http://www.facebook.com");
+        });
+    options.AddPolicy(name: myspecificPolicy,
+                      policy =>
+                      {
+                          policy.WithOrigins("http://google.com",
+                                              "http://www.facebook.com")
+                                                .WithMethods("PUT", "DELETE", "GET");
+                      });
+    options.AddPolicy(name: myspecificPolicy2,
+                          policy =>
+                          {
+                              policy.WithOrigins("http://google.com",
+                                              "http://www.facebook.com")
+                                                  .AllowAnyHeader()
+                                                  .AllowAnyMethod();
+                          });
+});
+
 // Add services to the container.
 
 builder.Services.AddAuthentication(options =>
@@ -70,7 +99,13 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+
+app.UseCors();
+app.UseCors(myspecificPolicy);
+app.UseCors(myspecificPolicy2);
+
 app.UseAuthentication();
+
 
 app.UseAuthorization();
 

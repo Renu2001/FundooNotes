@@ -84,8 +84,68 @@ namespace FundooNotes.Controllers
 
             }
 
-            //[Authorize]
-            [HttpGet("GetNote{id:int}")]
+            [HttpGet("GetAllArchievedNotes")]
+            public IActionResult GetAllArchievedNote()
+            {
+                try
+                {
+                    var result = _noteBL.GetAllArchievedNote();
+                    if (result != null)
+                    {
+                        mod = new ResponseModel()
+                        {
+                            Success = "true",
+                            Message = "All Notes",
+                            Data = result
+                        };
+                    }
+                }
+                catch (CustomizeException ex)
+                {
+                    mod = new ResponseModel()
+                    {
+                        Success = "false",
+                        Message = ex.Message
+                    };
+                    return StatusCode(404, mod);
+
+                }
+                return StatusCode(200, mod);
+
+            }
+
+        [HttpGet("GetAllTrashNotes")]
+        public IActionResult GetAllTrashNote()
+        {
+            try
+            {
+                var result = _noteBL.GetAllTrashNote();
+                if (result != null)
+                {
+                    mod = new ResponseModel()
+                    {
+                        Success = "true",
+                        Message = "All Notes",
+                        Data = result
+                    };
+                }
+            }
+            catch (CustomizeException ex)
+            {
+                mod = new ResponseModel()
+                {
+                    Success = "false",
+                    Message = ex.Message
+                };
+                return StatusCode(404, mod);
+
+            }
+            return StatusCode(200, mod);
+
+        }
+
+        //[Authorize]
+        [HttpGet("GetNote{id:int}")]
             public IActionResult GetNoteById(int id)
             {
                 try

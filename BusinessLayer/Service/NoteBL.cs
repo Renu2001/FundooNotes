@@ -55,11 +55,35 @@ namespace BusinessLayer.Service
             }
         }
 
+        public IEnumerable<NoteEntity> GetAllArchievedNote()
+        {
+            try
+            {
+                return _noteRL.GetAllArchievedNote();
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
         public IEnumerable<NoteEntity> GetAllNote()
         {
             try
             {
                 return _noteRL.GetAllNote();
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        public IEnumerable<NoteEntity> GetAllTrashNote()
+        {
+            try
+            {
+                return _noteRL.GetAllTrashNote();
             }
             catch
             {

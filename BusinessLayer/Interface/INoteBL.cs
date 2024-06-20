@@ -14,6 +14,8 @@ namespace BusinessLayer.Interface
         public NoteEntity CreateNote(NoteModel noteModel);
         public NoteEntity DeleteNoteById(int id);
         public IEnumerable<NoteEntity> GetAllNote();
+        public IEnumerable<NoteEntity> GetAllArchievedNote();
+        public IEnumerable<NoteEntity> GetAllTrashNote();
         public NoteEntity GetNoteById(int id);
         public NoteEntity TrashById(int id);
         public NoteEntity UpdateById(int id, NoteModel model);

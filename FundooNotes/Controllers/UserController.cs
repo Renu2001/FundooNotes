@@ -45,7 +45,7 @@ namespace FundooNotes.Controllers
                     mod = new ResponseModel()
                     {
                         Success = "true",
-                        Message = "Data Added Successfully",
+                        Message = "User Added Successfully",
                         Data = result
                     };
                 }
@@ -63,7 +63,7 @@ namespace FundooNotes.Controllers
             return StatusCode(200, mod);
         }
 
-        [AllowAnonymous]
+      
         [HttpPost]
         [Route("Login")]
         public IActionResult Login(LoginML login)

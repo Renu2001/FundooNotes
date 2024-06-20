@@ -10,9 +10,9 @@ namespace RepositoryLayer.Interface
 {
     public interface ILabelRL
     {
-        LabelEntity AddLabel(LabelModel model);
-        LabelEntity DeleteLabel(int id);
-        List<LabelEntity> GetAllLabels();
-        LabelEntity UpdateLabel(int id ,LabelModel model);
+        Task<LabelEntity> AddLabel(LabelModel model);
+        Task<LabelEntity> DeleteLabel(int id);
+        Task<List<LabelEntity>> GetAllLabels();
+        Task<LabelEntity> UpdateLabel(int id ,LabelModel model);
     }
 }

@@ -88,7 +88,7 @@ namespace RepositoryLayer.Service
         public IEnumerable<NoteEntity> GetAllNote()
         {
             var result = fundooContext.Notes?.ToList();
-            if(result != null)
+            if (result != null)
             {
                 result.RemoveAll(note => note.IsTrashed || note.IsArchived);
                 return result;
@@ -97,7 +97,35 @@ namespace RepositoryLayer.Service
             {
                 throw new CustomizeException("No Note Found");
             }
-           
+
+        }
+
+        public IEnumerable<NoteEntity> GetAllTrashNote()
+        {
+            var result = fundooContext.Notes?.Where(note => note.IsTrashed).ToList();
+            if (result != null)
+            {
+                return result;
+            }
+            else
+            {
+                throw new CustomizeException("No Note Found");
+            }
+
+        }
+
+        public IEnumerable<NoteEntity> GetAllArchievedNote()
+        {
+            var result = fundooContext.Notes?.Where(note => note.IsArchived && note.IsTrashed == false ).ToList();
+            if (result != null)
+            {
+                return result;
+            }
+            else
+            {
+                throw new CustomizeException("No Note Found");
+            }
+
         }
 
         public NoteEntity GetNoteById(int id)
@@ -120,7 +148,6 @@ namespace RepositoryLayer.Service
             if (result != null)
             {
                 result.IsTrashed = !result.IsTrashed;
-                result.IsArchived = !result.IsArchived;
                 fundooContext.Notes?.Update(result);
                 fundooContext.SaveChanges();
             }
