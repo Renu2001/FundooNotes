@@ -48,7 +48,11 @@ namespace FundooNotes.Controllers
                         Message = "User Added Successfully",
                         Data = result
                     };
+
+                    HttpContext.Session.SetString("UserId", result.firstName.ToString());
+                    HttpContext.Session.SetString("UserEmail", result.email);
                 }
+
             }
             catch(CustomizeException ex) 
             {
@@ -157,5 +161,38 @@ namespace FundooNotes.Controllers
             return StatusCode(200, mod);
 
         }
+        [HttpGet]
+        [Route("GetUserSession")]
+        public IActionResult GetUserSession()
+        {
+            // Retrieve session values
+            var userId = HttpContext.Session.GetString("UserId");
+            var userEmail = HttpContext.Session.GetString("UserEmail");
+
+            if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(userEmail))
+            {
+                return StatusCode(404, new ResponseModel
+                {
+                    Success = "false",
+                    Message = "Session data not found"
+                });
+            }
+
+            var sessionData = new
+            {
+                UserId = userId,
+                UserEmail = userEmail
+            };
+
+            return StatusCode(200, new ResponseModel
+            {
+                Success = "true",
+                Message = "Session data retrieved successfully",
+                Data = sessionData
+            });
+        }
+
     }
+
+
 }
