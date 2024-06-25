@@ -15,10 +15,6 @@ var builder = WebApplication.CreateBuilder(args);
 var myspecificPolicy = "_myspecificPolicy";
 var myspecificPolicy2 = "_myspecificPolicy2";
 
-
-
-
-// Add services to the container.
 builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromSeconds(10);
@@ -70,6 +66,12 @@ builder.Services.AddCors(options =>
                                                   .AllowAnyHeader()
                                                   .AllowAnyMethod();
                           });
+});
+
+builder.Services.AddStackExchangeRedisCache(options =>
+{
+    options.Configuration = builder.Configuration["RedisCacheOptions:Configuration"];
+    options.InstanceName = builder.Configuration["RedisCacheOptions:InstanceName"];
 });
 
 builder.Services.AddControllers();
