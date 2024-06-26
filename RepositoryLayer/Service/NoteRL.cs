@@ -4,6 +4,7 @@ using RepositoryLayer.Context;
 using RepositoryLayer.CustomException;
 using RepositoryLayer.Entity;
 using RepositoryLayer.Interface;
+using RepositoryLayer.Utility;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,12 +18,14 @@ namespace RepositoryLayer.Service
     {
         private readonly FundooContext fundooContext;
         private readonly IDistributedCache _cache;
+        private readonly RabbitDemo _rabitMQProducer;
         public const string cacheKey = "RedisCachingDemoGET_ALL_PRODUCTS";
         List<NoteEntity> result;
-        public NoteRL(FundooContext fundooContext, IDistributedCache cache)
+        public NoteRL(FundooContext fundooContext, IDistributedCache cache, RabbitDemo rabitMQProducer)
         {
             this.fundooContext = fundooContext;
             _cache = cache;
+            _rabitMQProducer = rabitMQProducer;
         }
 
         public NoteEntity ArchieveById(int id)
@@ -91,6 +94,7 @@ namespace RepositoryLayer.Service
                         .SetSlidingExpiration(TimeSpan.FromMinutes(12));
                     _cache.SetAsync(cacheKey, newDataToCache, options);
                 }
+                _rabitMQProducer.SendProductMessage(noteEntity);
                 return noteEntity;
             }
             catch (Exception ex)

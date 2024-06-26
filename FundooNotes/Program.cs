@@ -92,6 +92,8 @@ builder.Services.AddScoped<ICollaboratorRL, CollaboratorRL>();
 builder.Services.AddScoped<ICollaboratorBL, CollaboratorBL>();
 builder.Services.AddScoped<Token>();
 builder.Services.AddScoped<Email>();
+builder.Services.AddScoped<RabbitDemo>();
+
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

@@ -90,3 +90,5 @@ D:\BRIDGELABZ\FundooNotes\FundooNotes\bin\Debug\net6.0\Microsoft.Extensions.Opti
 D:\BRIDGELABZ\FundooNotes\FundooNotes\bin\Debug\net6.0\Microsoft.Extensions.Primitives.dll
 D:\BRIDGELABZ\FundooNotes\FundooNotes\bin\Debug\net6.0\Pipelines.Sockets.Unofficial.dll
 D:\BRIDGELABZ\FundooNotes\FundooNotes\bin\Debug\net6.0\StackExchange.Redis.dll
+D:\BRIDGELABZ\FundooNotes\FundooNotes\bin\Debug\net6.0\RabbitMQ.Client.dll
+D:\BRIDGELABZ\FundooNotes\FundooNotes\bin\Debug\net6.0\System.Threading.Channels.dll
