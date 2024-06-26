@@ -19,13 +19,15 @@ namespace RepositoryLayer.Service
         private readonly FundooContext fundooContext;
         private readonly IDistributedCache _cache;
         private readonly RabbitDemo _rabitMQProducer;
+        private readonly ReddisDemo _reddis;
         public const string cacheKey = "RedisCachingDemoGET_ALL_PRODUCTS";
         List<NoteEntity> result;
-        public NoteRL(FundooContext fundooContext, IDistributedCache cache, RabbitDemo rabitMQProducer)
+        public NoteRL(FundooContext fundooContext, IDistributedCache cache, RabbitDemo rabitMQProducer, ReddisDemo reddis)
         {
             this.fundooContext = fundooContext;
             _cache = cache;
             _rabitMQProducer = rabitMQProducer;
+            _reddis = reddis;
         }
 
         public NoteEntity ArchieveById(int id)
@@ -50,12 +52,13 @@ namespace RepositoryLayer.Service
                                 noteEntity.IsArchived = !noteEntity.IsArchived;
                             }
                         }
-                        var cachedDataString2 = JsonSerializer.Serialize(result2);
-                        var newDataToCache = Encoding.UTF8.GetBytes(cachedDataString2);
-                        var options = new DistributedCacheEntryOptions()
-                            .SetAbsoluteExpiration(DateTime.Now.AddMinutes(24))
-                            .SetSlidingExpiration(TimeSpan.FromMinutes(12));
-                        _cache.SetAsync(cacheKey, newDataToCache, options);
+                        _reddis.SetCache(result2, cacheKey);
+                        //var cachedDataString2 = JsonSerializer.Serialize(result2);
+                        //var newDataToCache = Encoding.UTF8.GetBytes(cachedDataString2);
+                        //var options = new DistributedCacheEntryOptions()
+                        //    .SetAbsoluteExpiration(DateTime.Now.AddMinutes(24))
+                        //    .SetSlidingExpiration(TimeSpan.FromMinutes(12));
+                        //_cache.SetAsync(cacheKey, newDataToCache, options);
                     }
                     return result;
 
@@ -87,12 +90,13 @@ namespace RepositoryLayer.Service
                     var cachedDataString = Encoding.UTF8.GetString(cachedData);
                     var result2 = JsonSerializer.Deserialize<List<NoteEntity>>(cachedDataString) ?? new List<NoteEntity>();
                     result2.Add(noteEntity);
-                    var cachedDataString2 = JsonSerializer.Serialize(result2);
-                    var newDataToCache = Encoding.UTF8.GetBytes(cachedDataString2);
-                    var options = new DistributedCacheEntryOptions()
-                        .SetAbsoluteExpiration(DateTime.Now.AddMinutes(24))
-                        .SetSlidingExpiration(TimeSpan.FromMinutes(12));
-                    _cache.SetAsync(cacheKey, newDataToCache, options);
+                    _reddis.SetCache(result2, cacheKey);
+                    //var cachedDataString2 = JsonSerializer.Serialize(result2);
+                    //var newDataToCache = Encoding.UTF8.GetBytes(cachedDataString2);
+                    //var options = new DistributedCacheEntryOptions()
+                    //    .SetAbsoluteExpiration(DateTime.Now.AddMinutes(24))
+                    //    .SetSlidingExpiration(TimeSpan.FromMinutes(12));
+                    //_cache.SetAsync(cacheKey, newDataToCache, options);
                 }
                 _rabitMQProducer.SendProductMessage(noteEntity);
                 return noteEntity;
@@ -142,12 +146,13 @@ namespace RepositoryLayer.Service
             {
                 result = fundooContext.Notes?.ToList();
                 //result.RemoveAll(note => note.IsTrashed || note.IsArchived);
-                var cachedDataString = JsonSerializer.Serialize(result);
-                var newDataToCache = Encoding.UTF8.GetBytes(cachedDataString);
-                var options = new DistributedCacheEntryOptions()
-                    .SetAbsoluteExpiration(DateTime.Now.AddMinutes(50))
-                    .SetSlidingExpiration(TimeSpan.FromMinutes(120));
-                _cache.Set(cacheKey, newDataToCache, options);
+                _reddis.SetCache(result, cacheKey);
+                //var cachedDataString = JsonSerializer.Serialize(result);
+                //var newDataToCache = Encoding.UTF8.GetBytes(cachedDataString);
+                //var options = new DistributedCacheEntryOptions()
+                //    .SetAbsoluteExpiration(DateTime.Now.AddMinutes(50))
+                //    .SetSlidingExpiration(TimeSpan.FromMinutes(120));
+                //_cache.Set(cacheKey, newDataToCache, options);
             }
 
             if (result != null)
@@ -261,12 +266,13 @@ namespace RepositoryLayer.Service
                             noteEntity.IsTrashed = !noteEntity.IsTrashed;
                         }
                     }
-                    var cachedDataString2 = JsonSerializer.Serialize(result2);
-                    var newDataToCache = Encoding.UTF8.GetBytes(cachedDataString2);
-                    var options = new DistributedCacheEntryOptions()
-                        .SetAbsoluteExpiration(DateTime.Now.AddMinutes(24))
-                        .SetSlidingExpiration(TimeSpan.FromMinutes(12));
-                    _cache.SetAsync(cacheKey, newDataToCache, options);
+                    _reddis.SetCache(result2, cacheKey);
+                    //var cachedDataString2 = JsonSerializer.Serialize(result2);
+                    //var newDataToCache = Encoding.UTF8.GetBytes(cachedDataString2);
+                    //var options = new DistributedCacheEntryOptions()
+                    //    .SetAbsoluteExpiration(DateTime.Now.AddMinutes(24))
+                    //    .SetSlidingExpiration(TimeSpan.FromMinutes(12));
+                    //_cache.SetAsync(cacheKey, newDataToCache, options);
                 }
             }
             return result;
@@ -296,12 +302,13 @@ namespace RepositoryLayer.Service
                                 noteEntity.Description=model.Description;
                             }
                         }
-                        var cachedDataString2 = JsonSerializer.Serialize(result2);
-                        var newDataToCache = Encoding.UTF8.GetBytes(cachedDataString2);
-                        var options = new DistributedCacheEntryOptions()
-                            .SetAbsoluteExpiration(DateTime.Now.AddMinutes(24))
-                            .SetSlidingExpiration(TimeSpan.FromMinutes(12));
-                        _cache.SetAsync(cacheKey, newDataToCache, options);
+                        _reddis.SetCache(result2, cacheKey);
+                        //var cachedDataString2 = JsonSerializer.Serialize(result2);
+                        //var newDataToCache = Encoding.UTF8.GetBytes(cachedDataString2);
+                        //var options = new DistributedCacheEntryOptions()
+                        //    .SetAbsoluteExpiration(DateTime.Now.AddMinutes(24))
+                        //    .SetSlidingExpiration(TimeSpan.FromMinutes(12));
+                        //_cache.SetAsync(cacheKey, newDataToCache, options);
                     }
                     return entity;
                 }
