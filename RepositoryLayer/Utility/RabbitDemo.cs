@@ -19,10 +19,14 @@ namespace RepositoryLayer.Utility
             var connection = factory.CreateConnection();
             
             var channel = connection.CreateModel();
+
             channel.QueueDeclare("NoteData", exclusive: false);
+
             var json = JsonConvert.SerializeObject(message);
+
             var body = Encoding.UTF8.GetBytes(json);
+
             channel.BasicPublish(exchange: "", routingKey: "NoteData", body: body);
-        }
+        } 
     }
 }

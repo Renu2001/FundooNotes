@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using ModelLayer;
 using RepositoryLayer.Context;
 using RepositoryLayer.CustomException;
@@ -15,9 +16,12 @@ namespace RepositoryLayer.Service
     public class LabelRL : ILabelRL
     {
         private readonly FundooContext fundooContext;
-        public LabelRL(FundooContext fundooContext)
+        private readonly ILogger<LabelRL> _logger;
+        public LabelRL(FundooContext fundooContext, ILogger<LabelRL> logger)
         {
             this.fundooContext = fundooContext;
+            _logger = logger;
+            _logger.LogInformation("Nlog is integrated");
         }
         public async Task<LabelEntity> AddLabel(LabelModel model)
         {
@@ -30,7 +34,8 @@ namespace RepositoryLayer.Service
                 try
                 {
                     fundooContext.Labels?.Add(labelEntity);
-                    await fundooContext.SaveChangesAsync(); // Await the SaveChangesAsync call
+                    await fundooContext.SaveChangesAsync();
+                    _logger.LogInformation("LabelController.AddLabel method called!!!");
                     return labelEntity;
                 }
                 catch (Exception ex)

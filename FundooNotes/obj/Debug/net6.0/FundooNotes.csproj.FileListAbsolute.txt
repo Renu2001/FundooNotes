@@ -92,3 +92,7 @@ D:\BRIDGELABZ\FundooNotes\FundooNotes\bin\Debug\net6.0\Pipelines.Sockets.Unoffic
 D:\BRIDGELABZ\FundooNotes\FundooNotes\bin\Debug\net6.0\StackExchange.Redis.dll
 D:\BRIDGELABZ\FundooNotes\FundooNotes\bin\Debug\net6.0\RabbitMQ.Client.dll
 D:\BRIDGELABZ\FundooNotes\FundooNotes\bin\Debug\net6.0\System.Threading.Channels.dll
+D:\BRIDGELABZ\FundooNotes\FundooNotes\bin\Debug\net6.0\NLog.dll
+D:\BRIDGELABZ\FundooNotes\FundooNotes\bin\Debug\net6.0\NLog.Extensions.Logging.dll
+D:\BRIDGELABZ\FundooNotes\FundooNotes\bin\Debug\net6.0\NLog.Web.AspNetCore.dll
+D:\BRIDGELABZ\FundooNotes\FundooNotes\bin\Debug\net6.0\nlog.config
