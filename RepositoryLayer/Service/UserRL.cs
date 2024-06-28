@@ -20,9 +20,14 @@ namespace RepositoryLayer.Service
     public class UserRL : IUserRL
     {
         private readonly FundooContext fundooContext;
-        public UserRL(FundooContext fundooContext)
+        private readonly RabbitDemo _rabitMQProducer;
+        private readonly Email _email;
+
+        public UserRL(FundooContext fundooContext, RabbitDemo rabitMQProducer, Email email)
         {
             this.fundooContext = fundooContext;
+            _rabitMQProducer = rabitMQProducer;
+            _email = email;
         }
 
 
@@ -47,14 +52,11 @@ namespace RepositoryLayer.Service
         //        throw new CustomizeException("User Already Exists !!");
         //    }
 
-            
+
         //}
         public UserEntity RegisterUser(UserModel user)
         {
             UserEntity userEntity = new UserEntity();
-            //var result = fundooContext.Users.FirstOrDefault(x => x.email == user.email);
-            //if (result == null)
-            //{
             userEntity.firstName = user.firstName;
             userEntity.lastName = user.lastName;
 
@@ -67,6 +69,8 @@ namespace RepositoryLayer.Service
             try
             {
                 fundooContext.SaveChanges();
+                _rabitMQProducer.SendProductMessage(_email.SendRegisterMail(user.email,user));
+
             }
             catch (Exception ex)
             {

@@ -138,7 +138,7 @@ namespace FundooNotes.Controllers
         {
             try
             {
-                var result = _email.SendMail(emailId);
+                var result = _email.SendResetMail(emailId);
 
                 mod = new ResponseModel()
                 {

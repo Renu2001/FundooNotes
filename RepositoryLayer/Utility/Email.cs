@@ -12,6 +12,7 @@ using ModelLayer;
 using RepositoryLayer.CustomException;
 using RepositoryLayer.Utility;
 using Microsoft.Extensions.Configuration;
+using RepositoryLayer.Entity;
 namespace RepositoryLayer.Utility
 {
     public class Email
@@ -27,7 +28,7 @@ namespace RepositoryLayer.Utility
             _config = config;
         }
 
-        public string SendMail(string emailId)
+        public string SendResetMail(string emailId)
         {
             string token;
             var result = fundooContext.Users.FirstOrDefault(x => x.email == emailId);
@@ -68,6 +69,24 @@ namespace RepositoryLayer.Utility
             smtp.Send(email);
             smtp.Disconnect(true);
             return token;
+        }
+
+        public string SendRegisterMail(string emailId,UserModel user)
+        {
+            var email = new MimeMessage();
+            email.From.Add(MailboxAddress.Parse("anonymous.u2003@gmail.com"));
+            email.To.Add(MailboxAddress.Parse(emailId));
+            email.Subject = "User Registered";
+            email.Body = new TextPart(MimeKit.Text.TextFormat.Text)
+            {
+                Text = $@"{user.firstName} is Registered Succesfully"
+            };
+            using var smtp = new SmtpClient();
+            smtp.Connect(_config["Email:Host"], 587, SecureSocketOptions.StartTls);
+            smtp.Authenticate(_config["Email:UserName"], _config["Email:Password"]);
+            smtp.Send(email);
+            smtp.Disconnect(true);
+            return "Mail sent successfull";
         }
     }
 }

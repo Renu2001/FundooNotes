@@ -19,14 +19,12 @@ namespace RepositoryLayer.Service
     public class NoteRL : INoteRL
     {
         private readonly FundooContext fundooContext;
-        private readonly IDistributedCache _cache;
         private readonly RabbitDemo _rabitMQProducer;
         private readonly ReddisDemo _reddis;
         public const string cacheKey = "RedisCachingDemoGET_ALL_PRODUCTS";
-        public NoteRL(FundooContext fundooContext, IDistributedCache cache, RabbitDemo rabitMQProducer, ReddisDemo reddis)
+        public NoteRL(FundooContext fundooContext, RabbitDemo rabitMQProducer, ReddisDemo reddis)
         {
             this.fundooContext = fundooContext;
-            _cache = cache;
             _rabitMQProducer = rabitMQProducer;
             _reddis = reddis;
         }
