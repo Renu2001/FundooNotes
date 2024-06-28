@@ -170,12 +170,12 @@ namespace RepositoryLayer.Service
                    }).ToList()
                })
                .ToList();
-                notes.Where(n => n.IsTrashed).ToList();
+                
 
             }
             if (notes != null)
             {
-                return notes;
+                return notes.Where(n => n.IsTrashed).ToList();
             }
             else
             {
@@ -213,13 +213,13 @@ namespace RepositoryLayer.Service
                    }).ToList()
                })
                .ToList();
-                notes.Where(note => note.IsArchived && note.IsTrashed == false).ToList();
+                
 
             }
            
             if (notes != null)
             {
-                return notes;
+                return notes.Where(note => note.IsArchived && note.IsTrashed == false).ToList();
             }
             else
             {
