@@ -30,7 +30,7 @@ namespace BusinessLayer.Service
             }
         }
 
-        public IEnumerable<object> GetAllLabelsAndNotesFromAllNotes()
+        public IEnumerable<NoteWithLabelDTO> GetAllLabelsAndNotesFromAllNotes()
         {
             try
             {

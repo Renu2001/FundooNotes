@@ -1,10 +1,12 @@
-﻿using Microsoft.Extensions.Caching.Distributed;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Distributed;
 using ModelLayer;
 using RepositoryLayer.Context;
 using RepositoryLayer.CustomException;
 using RepositoryLayer.Entity;
 using RepositoryLayer.Interface;
 using RepositoryLayer.Utility;
+using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,7 +23,6 @@ namespace RepositoryLayer.Service
         private readonly RabbitDemo _rabitMQProducer;
         private readonly ReddisDemo _reddis;
         public const string cacheKey = "RedisCachingDemoGET_ALL_PRODUCTS";
-        List<NoteEntity> result;
         public NoteRL(FundooContext fundooContext, IDistributedCache cache, RabbitDemo rabitMQProducer, ReddisDemo reddis)
         {
             this.fundooContext = fundooContext;
@@ -40,26 +41,7 @@ namespace RepositoryLayer.Service
                     result.IsArchived = !result.IsArchived;
                     fundooContext.Notes?.Update(result);
                     fundooContext.SaveChanges();
-                    var cachedData = _cache.Get(cacheKey);
-                    if (cachedData != null)
-                    {
-                        var cachedDataString = Encoding.UTF8.GetString(cachedData);
-                        var result2 = JsonSerializer.Deserialize<List<NoteEntity>>(cachedDataString) ?? new List<NoteEntity>();
-                        foreach (var noteEntity in result2)
-                        {
-                            if (noteEntity.NoteId == id)
-                            {
-                                noteEntity.IsArchived = !noteEntity.IsArchived;
-                            }
-                        }
-                        _reddis.SetCache(result2, cacheKey);
-                        //var cachedDataString2 = JsonSerializer.Serialize(result2);
-                        //var newDataToCache = Encoding.UTF8.GetBytes(cachedDataString2);
-                        //var options = new DistributedCacheEntryOptions()
-                        //    .SetAbsoluteExpiration(DateTime.Now.AddMinutes(24))
-                        //    .SetSlidingExpiration(TimeSpan.FromMinutes(12));
-                        //_cache.SetAsync(cacheKey, newDataToCache, options);
-                    }
+                    _reddis.RemoveCache(cacheKey);
                     return result;
 
                 }
@@ -84,20 +66,7 @@ namespace RepositoryLayer.Service
             {
                 fundooContext.Notes?.Add(noteEntity);
                 fundooContext.SaveChanges();
-                var cachedData = _cache.Get(cacheKey);
-                if (cachedData != null)
-                {
-                    var cachedDataString = Encoding.UTF8.GetString(cachedData);
-                    var result2 = JsonSerializer.Deserialize<List<NoteEntity>>(cachedDataString) ?? new List<NoteEntity>();
-                    result2.Add(noteEntity);
-                    _reddis.SetCache(result2, cacheKey);
-                    //var cachedDataString2 = JsonSerializer.Serialize(result2);
-                    //var newDataToCache = Encoding.UTF8.GetBytes(cachedDataString2);
-                    //var options = new DistributedCacheEntryOptions()
-                    //    .SetAbsoluteExpiration(DateTime.Now.AddMinutes(24))
-                    //    .SetSlidingExpiration(TimeSpan.FromMinutes(12));
-                    //_cache.SetAsync(cacheKey, newDataToCache, options);
-                }
+                _reddis.RemoveCache(cacheKey);
                 _rabitMQProducer.SendProductMessage(noteEntity);
                 return noteEntity;
             }
@@ -116,7 +85,7 @@ namespace RepositoryLayer.Service
                 {
                     fundooContext.Notes?.Remove(result);
                     fundooContext.SaveChanges();
-                    _cache.Remove(cacheKey);
+                    _reddis.RemoveCache(cacheKey);
                     return result;
                 }
                 catch (Exception ex)
@@ -132,56 +101,78 @@ namespace RepositoryLayer.Service
 
         }
 
-        public IEnumerable<NoteEntity> GetAllNote()
+        public IEnumerable<NoteWithLabelDTO> GetAllLabelsAndNotesFromAllNotes()
         {
-           
-            var cachedData = _cache.Get(cacheKey);
+            var cachedData = _reddis.GetCache<List<NoteWithLabelDTO>>(cacheKey);
             if (cachedData != null)
             {
-
-                var cachedDataString = Encoding.UTF8.GetString(cachedData);
-                result = JsonSerializer.Deserialize<List<NoteEntity>>(cachedDataString) ?? new List<NoteEntity>();
+                cachedData.RemoveAll(note => note.IsTrashed || note.IsArchived);
+                return cachedData;
             }
             else
             {
-                result = fundooContext.Notes?.ToList();
-                //result.RemoveAll(note => note.IsTrashed || note.IsArchived);
-                _reddis.SetCache(result, cacheKey);
-                //var cachedDataString = JsonSerializer.Serialize(result);
-                //var newDataToCache = Encoding.UTF8.GetBytes(cachedDataString);
-                //var options = new DistributedCacheEntryOptions()
-                //    .SetAbsoluteExpiration(DateTime.Now.AddMinutes(50))
-                //    .SetSlidingExpiration(TimeSpan.FromMinutes(120));
-                //_cache.Set(cacheKey, newDataToCache, options);
-            }
-
-            if (result != null)
-            {
-                return result;
-            }
-            else
-            {
-                throw new CustomizeException("No Note Found");
+                var notesWithLabels = fundooContext.Notes
+                .Include(n => n.NoteLabel)
+                    .ThenInclude(nl => nl.Labels)
+                .Select(n => new NoteWithLabelDTO
+                {
+                    NoteId = n.NoteId,
+                    Title = n.Title,
+                    Description = n.Description,
+                    IsTrashed = n.IsTrashed,
+                    IsArchived = n.IsArchived,
+                    Labels = n.NoteLabel.Select(nl => new LabelDTO
+                    {
+                        LabelId = nl.Labels.LabelId,
+                        LabelName = nl.Labels.LabelName
+                    }).ToList()
+                })
+                .ToList();
+                
+                if (!notesWithLabels.Any())
+                {
+                    throw new CustomizeException("No labels and notes found");
+                }
+                _reddis.SetCache(notesWithLabels, cacheKey);
+                notesWithLabels.RemoveAll(note => note.IsTrashed || note.IsArchived);
+                return notesWithLabels;
             }
 
         }
+ 
 
-        public IEnumerable<NoteEntity> GetAllTrashNote()
+        public IEnumerable<NoteWithLabelDTO> GetAllTrashNote()
         {
-            List<NoteEntity> notes;
-            var cachedData = _cache.Get(cacheKey);
+            List<NoteWithLabelDTO> notes;
+            var cachedData = _reddis.GetCache<List<NoteWithLabelDTO>>(cacheKey);
             if (cachedData != null)
             {
-
-                var cachedDataString = Encoding.UTF8.GetString(cachedData);
-                result = JsonSerializer.Deserialize<List<NoteEntity>>(cachedDataString) ?? new List<NoteEntity>();
-                notes = result.Where(note => note.IsTrashed).ToList();
-            }
-            else
-            {
-                notes = fundooContext.Notes?.Where(note => note.IsTrashed).ToList();
+                notes = cachedData.Where(note => note.IsTrashed).ToList();
+                return notes;
             }
            
+            else
+            {
+                notes = fundooContext.Notes
+               .Include(n => n.NoteLabel)
+                   .ThenInclude(nl => nl.Labels)
+               .Select(n => new NoteWithLabelDTO
+               {
+                   NoteId = n.NoteId,
+                   Title = n.Title,
+                   Description = n.Description,
+                   IsTrashed = n.IsTrashed,
+                   IsArchived = n.IsArchived,
+                   Labels = n.NoteLabel.Select(nl => new LabelDTO
+                   {
+                       LabelId = nl.Labels.LabelId,
+                       LabelName = nl.Labels.LabelName
+                   }).ToList()
+               })
+               .ToList();
+                notes.Where(n => n.IsTrashed).ToList();
+
+            }
             if (notes != null)
             {
                 return notes;
@@ -193,20 +184,37 @@ namespace RepositoryLayer.Service
 
         }
 
-        public IEnumerable<NoteEntity> GetAllArchievedNote()
+        public IEnumerable<NoteWithLabelDTO> GetAllArchievedNote()
         {
-            List<NoteEntity> notes;
-            var cachedData = _cache.Get(cacheKey);
+            List<NoteWithLabelDTO> notes;
+            var cachedData = _reddis.GetCache<List<NoteWithLabelDTO>>(cacheKey);
             if (cachedData != null)
             {
-
-                var cachedDataString = Encoding.UTF8.GetString(cachedData);
-                result = JsonSerializer.Deserialize<List<NoteEntity>>(cachedDataString) ?? new List<NoteEntity>();
-                notes = result.Where(note => note.IsArchived && note.IsTrashed == false).ToList();
+                notes = cachedData.Where(note => note.IsArchived && note.IsTrashed == false).ToList();
+                return notes;
             }
+
             else
             {
-                notes = fundooContext.Notes?.Where(note => note.IsArchived && note.IsTrashed == false).ToList();
+                notes = fundooContext.Notes
+               .Include(n => n.NoteLabel)
+                   .ThenInclude(nl => nl.Labels)
+               .Select(n => new NoteWithLabelDTO
+               {
+                   NoteId = n.NoteId,
+                   Title = n.Title,
+                   Description = n.Description,
+                   IsTrashed = n.IsTrashed,
+                   IsArchived = n.IsArchived,
+                   Labels = n.NoteLabel.Select(nl => new LabelDTO
+                   {
+                       LabelId = nl.Labels.LabelId,
+                       LabelName = nl.Labels.LabelName
+                   }).ToList()
+               })
+               .ToList();
+                notes.Where(note => note.IsArchived && note.IsTrashed == false).ToList();
+
             }
            
             if (notes != null)
@@ -219,33 +227,43 @@ namespace RepositoryLayer.Service
             }
         }
 
-        public NoteEntity GetNoteById(int id)
+        public NoteWithLabelDTO GetNoteById(int id)
         {
-            NoteEntity notes;
-            var cachedData = _cache.Get(cacheKey);
+            NoteWithLabelDTO note;
+            var cachedData = _reddis.GetCache<List<NoteWithLabelDTO>>(cacheKey);
             if (cachedData != null)
             {
-
-                var cachedDataString = Encoding.UTF8.GetString(cachedData);
-                result = JsonSerializer.Deserialize<List<NoteEntity>>(cachedDataString) ?? new List<NoteEntity>();
-                notes =result.Where(note => note.NoteId == id).FirstOrDefault(); ; 
-            }
-            else
-            {
-                notes = fundooContext.Notes?.Find(id); ;
+                note = cachedData.FirstOrDefault(n => n.NoteId == id);
+                if (note != null)
+                {
+                    return note;
+                }
             }
 
-            if (notes != null)
-            {
-                return notes;
-            }
-            else
-            {
-                throw new CustomizeException("No Note Found");
-            }
+            var notes = fundooContext.Notes
+                .Include(n => n.NoteLabel)
+                    .ThenInclude(nl => nl.Labels)
+                .Select(n => new NoteWithLabelDTO
+                {
+                    NoteId = n.NoteId,
+                    Title = n.Title,
+                    Description = n.Description,
+                    IsTrashed = n.IsTrashed,
+                    IsArchived = n.IsArchived,
+                    Labels = n.NoteLabel.Select(nl => new LabelDTO
+                    {
+                        LabelId = nl.Labels.LabelId,
+                        LabelName = nl.Labels.LabelName
+                    }).ToList()
+                })
+                .Where(n => n.IsArchived && !n.IsTrashed)
+                .ToList();
+
+            note = notes.FirstOrDefault(n => n.NoteId == id);
+            return note;
+
 
         }
-
         public NoteEntity TrashById(int id)
         {
             var result = fundooContext.Notes?.Find(id);
@@ -254,26 +272,7 @@ namespace RepositoryLayer.Service
                 result.IsTrashed = !result.IsTrashed;
                 fundooContext.Notes?.Update(result);
                 fundooContext.SaveChanges();
-                var cachedData = _cache.Get(cacheKey);
-                if (cachedData != null)
-                {
-                    var cachedDataString = Encoding.UTF8.GetString(cachedData);
-                    var result2 = JsonSerializer.Deserialize<List<NoteEntity>>(cachedDataString) ?? new List<NoteEntity>();
-                    foreach (var noteEntity in result2)
-                    {
-                        if (noteEntity.NoteId == id)
-                        {
-                            noteEntity.IsTrashed = !noteEntity.IsTrashed;
-                        }
-                    }
-                    _reddis.SetCache(result2, cacheKey);
-                    //var cachedDataString2 = JsonSerializer.Serialize(result2);
-                    //var newDataToCache = Encoding.UTF8.GetBytes(cachedDataString2);
-                    //var options = new DistributedCacheEntryOptions()
-                    //    .SetAbsoluteExpiration(DateTime.Now.AddMinutes(24))
-                    //    .SetSlidingExpiration(TimeSpan.FromMinutes(12));
-                    //_cache.SetAsync(cacheKey, newDataToCache, options);
-                }
+                _reddis.RemoveCache(cacheKey);
             }
             return result;
         }
@@ -289,27 +288,7 @@ namespace RepositoryLayer.Service
                 {
                     fundooContext.Notes?.Update(entity);
                     fundooContext.SaveChanges();
-                    var cachedData = _cache.Get(cacheKey);
-                    if (cachedData != null)
-                    {
-                        var cachedDataString = Encoding.UTF8.GetString(cachedData);
-                        var result2 = JsonSerializer.Deserialize<List<NoteEntity>>(cachedDataString) ?? new List<NoteEntity>();
-                        foreach (var noteEntity in result2)
-                        {
-                            if (noteEntity.NoteId == id)
-                            {
-                                noteEntity.Title= model.Title;
-                                noteEntity.Description=model.Description;
-                            }
-                        }
-                        _reddis.SetCache(result2, cacheKey);
-                        //var cachedDataString2 = JsonSerializer.Serialize(result2);
-                        //var newDataToCache = Encoding.UTF8.GetBytes(cachedDataString2);
-                        //var options = new DistributedCacheEntryOptions()
-                        //    .SetAbsoluteExpiration(DateTime.Now.AddMinutes(24))
-                        //    .SetSlidingExpiration(TimeSpan.FromMinutes(12));
-                        //_cache.SetAsync(cacheKey, newDataToCache, options);
-                    }
+                    _reddis.RemoveCache(cacheKey);
                     return entity;
                 }
                 catch (Exception ex)

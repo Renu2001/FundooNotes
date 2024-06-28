@@ -10,7 +10,7 @@ namespace BusinessLayer.Interface
 {
     public interface INoteLabelBL
     {
-        public IEnumerable<object> GetAllLabelsAndNotesFromAllNotes();
+        public IEnumerable<NoteWithLabelDTO> GetAllLabelsAndNotesFromAllNotes();
         public NoteEntity AddLabelsToNotes(int labelId, int noteId);
         public IEnumerable<LabelEntity> GetAllLabelsFromNotes(int noteid);
         public IEnumerable<NoteEntity> GetAllNotesFromLabel(int labelId);

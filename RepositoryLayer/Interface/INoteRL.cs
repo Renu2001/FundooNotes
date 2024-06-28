@@ -13,11 +13,11 @@ namespace RepositoryLayer.Interface
         NoteEntity ArchieveById(int id);
         public NoteEntity CreateNote(NoteModel noteModel);
         public NoteEntity DeleteNoteById(int id);
-        public IEnumerable<NoteEntity> GetAllNote();
-        public IEnumerable<NoteEntity> GetAllArchievedNote();
-        public IEnumerable<NoteEntity> GetAllTrashNote();
+        public IEnumerable<NoteWithLabelDTO> GetAllLabelsAndNotesFromAllNotes();
+        public IEnumerable<NoteWithLabelDTO> GetAllArchievedNote();
+        public IEnumerable<NoteWithLabelDTO> GetAllTrashNote();
 
-        public NoteEntity GetNoteById(int id);
+        public NoteWithLabelDTO GetNoteById(int id);
         NoteEntity TrashById(int id);
         public NoteEntity UpdateById(int id, NoteModel model);
     }

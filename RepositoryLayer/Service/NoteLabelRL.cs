@@ -20,43 +20,34 @@ namespace RepositoryLayer.Service
             this.fundooContext = fundooContext;
         }
 
-        public IEnumerable<object> GetAllLabelsAndNotesFromAllNotes()
+        public IEnumerable<NoteWithLabelDTO> GetAllLabelsAndNotesFromAllNotes()
         {
             var notesWithLabels = fundooContext.Notes
-         .Include(n => n.NoteLabel)
-             .ThenInclude(nl => nl.Labels)
-         .ToList();
-
-            var groupedNotes = notesWithLabels
-                .GroupBy(n => n.NoteId)
-                .Select(g => new
+                .Include(n => n.NoteLabel)
+                    .ThenInclude(nl => nl.Labels)
+                .Select(n => new NoteWithLabelDTO
                 {
-                    Note = new
+                    NoteId = n.NoteId,
+                    Title = n.Title,
+                    Description = n.Description,
+                    IsTrashed = n.IsTrashed,
+                    IsArchived = n.IsArchived,
+                    Labels = n.NoteLabel.Select(nl => new LabelDTO
                     {
-                        NoteId = g.Key,
-                        Title = g.First().Title,
-                        Description = g.First().Description,
-                        IsTrashed = g.First().IsTrashed,
-                        IsArchived = g.First().IsArchived
-                    },
-                    Labels = g.SelectMany(n => n.NoteLabel.Select(nl => nl.Labels))
-                              .Select(l => new
-                              {
-                                  LabelId = l.LabelId,
-                                  LabelName = l.LabelName
-                              })
-                              .ToList()
+                        LabelId = nl.Labels.LabelId,
+                        LabelName = nl.Labels.LabelName
+                    }).ToList()
                 })
                 .ToList();
 
-            if (groupedNotes == null || !groupedNotes.Any())
+            if (!notesWithLabels.Any())
             {
                 throw new CustomizeException("No labels and notes found");
             }
+            return notesWithLabels;
 
-            return groupedNotes.Select(x => new { Note = x.Note, Labels = x.Labels }).ToList();
         }
-        
+
         public NoteEntity AddLabelsToNotes(int labelId,int noteId)
         {
             var note = fundooContext.Notes.FirstOrDefault(n => n.NoteId == noteId);

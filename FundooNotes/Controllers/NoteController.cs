@@ -54,12 +54,12 @@ namespace FundooNotes.Controllers
             }
 
             //[Authorize]
-            [HttpGet("GetAll")]
-            public IActionResult GetAllNote()
+            [HttpGet("GetAllNotes")]
+            public IActionResult GetAllLabelsAndNotesFromAllNotes()        
             {
-                try
+            try
                 {
-                    var result = _noteBL.GetAllNote();
+                    var result = _noteBL.GetAllLabelsAndNotesFromAllNotes();
                     if (result != null)
                     {
                         mod = new ResponseModel()

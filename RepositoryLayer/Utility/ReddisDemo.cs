@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Caching.Distributed;
+using ModelLayer;
 using RepositoryLayer.Entity;
 using System;
 using System.Collections.Generic;
@@ -16,14 +17,29 @@ namespace RepositoryLayer.Utility
         {
             _cache = cache;
         }
-        public void SetCache(List<NoteEntity> result2,string cacheKey)
+        public void SetCache<T>(T result2,string cacheKey)
         {
             var cachedDataString2 = JsonSerializer.Serialize(result2);
             var newDataToCache = Encoding.UTF8.GetBytes(cachedDataString2);
             var options = new DistributedCacheEntryOptions()
                 .SetAbsoluteExpiration(DateTime.Now.AddMinutes(24))
                 .SetSlidingExpiration(TimeSpan.FromMinutes(12));
-            _cache.SetAsync(cacheKey, newDataToCache, options);
+            _cache.Set(cacheKey, newDataToCache, options);
+        }
+
+        public T GetCache<T>(string cacheKey) where T : class
+        {
+            var cachedData = _cache.Get(cacheKey);
+            if (cachedData != null)
+            {
+                var cachedDataString = Encoding.UTF8.GetString(cachedData);
+                return JsonSerializer.Deserialize<T>(cachedDataString);
+            }
+            return null;
+        }
+        public void RemoveCache(string cacheKey) 
+        {
+           _cache.Remove(cacheKey);   
         }
     }
 }

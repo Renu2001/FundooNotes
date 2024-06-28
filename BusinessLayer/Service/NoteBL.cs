@@ -55,7 +55,7 @@ namespace BusinessLayer.Service
             }
         }
 
-        public IEnumerable<NoteEntity> GetAllArchievedNote()
+        public IEnumerable<NoteWithLabelDTO> GetAllArchievedNote()
         {
             try
             {
@@ -67,11 +67,11 @@ namespace BusinessLayer.Service
             }
         }
 
-        public IEnumerable<NoteEntity> GetAllNote()
+        public IEnumerable<NoteWithLabelDTO> GetAllLabelsAndNotesFromAllNotes()
         {
             try
             {
-                return _noteRL.GetAllNote();
+                return _noteRL.GetAllLabelsAndNotesFromAllNotes();
             }
             catch
             {
@@ -79,7 +79,7 @@ namespace BusinessLayer.Service
             }
         }
 
-        public IEnumerable<NoteEntity> GetAllTrashNote()
+        public IEnumerable<NoteWithLabelDTO> GetAllTrashNote()
         {
             try
             {
@@ -91,7 +91,7 @@ namespace BusinessLayer.Service
             }
         }
 
-        public NoteEntity GetNoteById(int id)
+        public NoteWithLabelDTO GetNoteById(int id)
         {
             try
             {

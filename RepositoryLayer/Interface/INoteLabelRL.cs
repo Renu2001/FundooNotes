@@ -10,7 +10,7 @@ namespace RepositoryLayer.Interface
 {
     public interface INoteLabelRL
     {
-        IEnumerable<object> GetAllLabelsAndNotesFromAllNotes();
+        IEnumerable<NoteWithLabelDTO> GetAllLabelsAndNotesFromAllNotes();
         NoteEntity AddLabelsToNotes(int labelId, int noteId);
         IEnumerable<LabelEntity> GetAllLabelsFromNotes(int noteid);
         IEnumerable<NoteEntity> GetAllNotesFromLabel(int labelId);
