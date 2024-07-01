@@ -1,5 +1,6 @@
 using BusinessLayer.Interface;
 using BusinessLayer.Service;
+using Confluent.Kafka;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -18,6 +19,9 @@ logger.Debug("init main");
 try
 {
     var builder = WebApplication.CreateBuilder(args);
+
+    var producerConfiguration = new ProducerConfig();
+    builder.Configuration.Bind("producerconfiguration", producerConfiguration);
 
     builder.Logging.ClearProviders();
     builder.Logging.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Trace);
@@ -91,6 +95,7 @@ try
         options.UseSqlServer(builder.Configuration.GetConnectionString("Default"));
     });
 
+    builder.Services.AddSingleton<ProducerConfig>(producerConfiguration);
     builder.Services.AddScoped<IUserRL, UserRL>();
     builder.Services.AddScoped<IUserBL, UserBL>();
     builder.Services.AddScoped<INoteRL, NoteRL>();

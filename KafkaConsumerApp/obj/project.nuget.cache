@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "dgSpecHash": "eRRtNk+N/WIS7ecUqF1VyRYg99yMLXFcg2G6uHIVN2o3cPXmyz5VKR4NArV6Sw88WN6xMhA03KRoSmFSNKLA0w==",
+  "success": true,
+  "projectFilePath": "D:\\BRIDGELABZ\\FundooNotes\\KafkaConsumerApp\\KafkaConsumerApp.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\renuk\\.nuget\\packages\\confluent.kafka\\2.4.0\\confluent.kafka.2.4.0.nupkg.sha512",
+    "C:\\Users\\renuk\\.nuget\\packages\\librdkafka.redist\\2.4.0\\librdkafka.redist.2.4.0.nupkg.sha512",
+    "C:\\Users\\renuk\\.nuget\\packages\\system.memory\\4.5.0\\system.memory.4.5.0.nupkg.sha512"
+  ],
+  "logs": []
+}

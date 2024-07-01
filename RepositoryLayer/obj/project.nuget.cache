@@ -1,12 +1,14 @@
 {
   "version": 2,
-  "dgSpecHash": "9KL3QkafA5vHzKnvJA/bJF6Bsrl0kBEp3rG69VqcqxZkGi5VEY0L1gaqSforSrIMHbIhXZpMTT/3FgGhnFTFEA==",
+  "dgSpecHash": "4h4vo3dhbgh28MV7Rsy9E6m/T+kO0HBy1ksX3QjEy/xiFgqTZ07ipeWS8nNBZjVvRATSLmZuo1PvxaU3gPh2Cg==",
   "success": true,
   "projectFilePath": "D:\\BRIDGELABZ\\FundooNotes\\RepositoryLayer\\RepositoryLayer.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\renuk\\.nuget\\packages\\bcrypt.net-core\\1.6.0\\bcrypt.net-core.1.6.0.nupkg.sha512",
     "C:\\Users\\renuk\\.nuget\\packages\\bouncycastle.cryptography\\2.3.1\\bouncycastle.cryptography.2.3.1.nupkg.sha512",
+    "C:\\Users\\renuk\\.nuget\\packages\\confluent.kafka\\2.4.0\\confluent.kafka.2.4.0.nupkg.sha512",
     "C:\\Users\\renuk\\.nuget\\packages\\humanizer.core\\2.8.26\\humanizer.core.2.8.26.nupkg.sha512",
+    "C:\\Users\\renuk\\.nuget\\packages\\librdkafka.redist\\2.4.0\\librdkafka.redist.2.4.0.nupkg.sha512",
     "C:\\Users\\renuk\\.nuget\\packages\\mailkit\\4.6.0\\mailkit.4.6.0.nupkg.sha512",
     "C:\\Users\\renuk\\.nuget\\packages\\microsoft.aspnetcore.authentication.jwtbearer\\6.0.0\\microsoft.aspnetcore.authentication.jwtbearer.6.0.0.nupkg.sha512",
     "C:\\Users\\renuk\\.nuget\\packages\\microsoft.aspnetcore.jsonpatch\\6.0.0\\microsoft.aspnetcore.jsonpatch.6.0.0.nupkg.sha512",

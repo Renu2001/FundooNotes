@@ -1,6 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Confluent.Kafka;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using ModelLayer;
+using Newtonsoft.Json;
 using RepositoryLayer.Context;
 using RepositoryLayer.CustomException;
 using RepositoryLayer.Entity;
@@ -17,11 +20,16 @@ namespace RepositoryLayer.Service
     {
         private readonly FundooContext fundooContext;
         private readonly ILogger<LabelRL> _logger;
-        public LabelRL(FundooContext fundooContext, ILogger<LabelRL> logger)
+        private ProducerConfig _configuration;
+        private readonly IConfiguration _config;
+        public LabelRL(FundooContext fundooContext, ILogger<LabelRL> logger, ProducerConfig configuration, IConfiguration config)
         {
             this.fundooContext = fundooContext;
             _logger = logger;
             _logger.LogInformation("Nlog is integrated");
+            _configuration = configuration;
+            _config = config;
+
         }
         public async Task<LabelEntity> AddLabel(LabelModel model)
         {
@@ -36,7 +44,16 @@ namespace RepositoryLayer.Service
                     fundooContext.Labels?.Add(labelEntity);
                     await fundooContext.SaveChangesAsync();
                     _logger.LogInformation("LabelController.AddLabel method called!!!");
-                    return labelEntity;
+                    string serializedData = JsonConvert.SerializeObject(model);
+
+                    var topic = _config.GetSection("TopicName").Value;
+                    using (var producer = new ProducerBuilder<Null, string>(_configuration).Build())
+                    {
+                        await producer.ProduceAsync(topic, new Message<Null, string> { Value = serializedData });
+                        producer.Flush(TimeSpan.FromSeconds(10));
+                        return labelEntity;
+                    }
+                    
                 }
                 catch (Exception ex)
                 {
