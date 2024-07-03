@@ -1,6 +1,7 @@
 using BusinessLayer.Interface;
 using BusinessLayer.Service;
 using Confluent.Kafka;
+using Confluent.Kafka.Admin;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -11,6 +12,7 @@ using RepositoryLayer.Interface;
 using RepositoryLayer.Service;
 using RepositoryLayer.Utility;
 using System.Text;
+using static Org.BouncyCastle.Math.EC.ECCurve;
 
 
 var logger = NLog.LogManager.Setup().LoadConfigurationFromAppSettings().GetCurrentClassLogger();
@@ -20,8 +22,45 @@ try
 {
     var builder = WebApplication.CreateBuilder(args);
 
+    builder.Configuration.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
+
+    // Bind producer configuration
     var producerConfiguration = new ProducerConfig();
     builder.Configuration.Bind("producerconfiguration", producerConfiguration);
+    builder.Services.AddSingleton<ProducerConfig>(producerConfiguration);
+
+    // Directly integrate topic creation logic
+    var topicName = builder.Configuration["Kafka:TopicName"];
+    var numPartitions = int.Parse(builder.Configuration["Kafka:NumPartitions"]);
+    var replicationFactor = short.Parse(builder.Configuration["Kafka:ReplicationFactor"]);
+
+    var config = new AdminClientConfig
+    {
+        BootstrapServers = builder.Configuration["producerconfiguration:bootstrapservers"]
+    };
+
+    using (var adminClient = new AdminClientBuilder(config).Build())
+    {
+        try
+        {
+            adminClient.CreateTopicsAsync(new List<TopicSpecification> {
+            new TopicSpecification { Name = topicName, NumPartitions = numPartitions, ReplicationFactor = replicationFactor }
+        }).GetAwaiter().GetResult();
+            Console.WriteLine($"Topic {topicName} created successfully");
+        }
+        catch (CreateTopicsException e)
+        {
+            if (e.Results[0].Error.IsError)
+            {
+                Console.WriteLine($"An error occurred creating topic {topicName}: {e.Results[0].Error.Reason}");
+            }
+            else
+            {
+                Console.WriteLine($"Topic {topicName} already exists");
+            }
+        }
+    }
+
 
     builder.Logging.ClearProviders();
     builder.Logging.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Trace);
@@ -95,7 +134,7 @@ try
         options.UseSqlServer(builder.Configuration.GetConnectionString("Default"));
     });
 
-    builder.Services.AddSingleton<ProducerConfig>(producerConfiguration);
+    
     builder.Services.AddScoped<IUserRL, UserRL>();
     builder.Services.AddScoped<IUserBL, UserBL>();
     builder.Services.AddScoped<INoteRL, NoteRL>();

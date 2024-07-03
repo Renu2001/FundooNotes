@@ -44,16 +44,17 @@ namespace RepositoryLayer.Service
                     fundooContext.Labels?.Add(labelEntity);
                     await fundooContext.SaveChangesAsync();
                     _logger.LogInformation("LabelController.AddLabel method called!!!");
-                    string serializedData = JsonConvert.SerializeObject(model);
 
-                    var topic = _config.GetSection("TopicName").Value;
+                    var serializedData = JsonConvert.SerializeObject(model);
+                    var topic = _config.GetSection("Kafka:TopicName").Value;
+
                     using (var producer = new ProducerBuilder<Null, string>(_configuration).Build())
                     {
                         await producer.ProduceAsync(topic, new Message<Null, string> { Value = serializedData });
                         producer.Flush(TimeSpan.FromSeconds(10));
-                        return labelEntity;
                     }
-                    
+                    return labelEntity;
+
                 }
                 catch (Exception ex)
                 {
