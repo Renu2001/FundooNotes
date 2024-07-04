@@ -8,6 +8,7 @@ using RepositoryLayer.Context;
 using RepositoryLayer.CustomException;
 using RepositoryLayer.Entity;
 using RepositoryLayer.Interface;
+using RepositoryLayer.Utility;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,16 +21,17 @@ namespace RepositoryLayer.Service
     {
         private readonly FundooContext fundooContext;
         private readonly ILogger<LabelRL> _logger;
-        private ProducerConfig _configuration;
+        //private ProducerConfig _configuration;
         private readonly IConfiguration _config;
-        public LabelRL(FundooContext fundooContext, ILogger<LabelRL> logger, ProducerConfig configuration, IConfiguration config)
+        private readonly KafkaProducer _kafkaProducer;
+        public LabelRL(FundooContext fundooContext, ILogger<LabelRL> logger, IConfiguration config, KafkaProducer kafkaProducer)
         {
             this.fundooContext = fundooContext;
             _logger = logger;
             _logger.LogInformation("Nlog is integrated");
-            _configuration = configuration;
+            //_configuration = configuration;
             _config = config;
-
+            _kafkaProducer = kafkaProducer;
         }
         public async Task<LabelEntity> AddLabel(LabelModel model)
         {
@@ -43,18 +45,12 @@ namespace RepositoryLayer.Service
                 {
                     fundooContext.Labels?.Add(labelEntity);
                     await fundooContext.SaveChangesAsync();
+                    var entity = await fundooContext.Labels?.FirstOrDefaultAsync(x => x.LabelName == model.LabelName);
                     _logger.LogInformation("LabelController.AddLabel method called!!!");
+                    int partition = entity.LabelId % 2 == 0 ? 0 : 1;
+                    await _kafkaProducer.ProduceMessageAsync(model, partition);
 
-                    var serializedData = JsonConvert.SerializeObject(model);
-                    var topic = _config.GetSection("Kafka:TopicName").Value;
-
-                    using (var producer = new ProducerBuilder<Null, string>(_configuration).Build())
-                    {
-                        await producer.ProduceAsync(topic, new Message<Null, string> { Value = serializedData });
-                        producer.Flush(TimeSpan.FromSeconds(10));
-                    }
                     return labelEntity;
-
                 }
                 catch (Exception ex)
                 {

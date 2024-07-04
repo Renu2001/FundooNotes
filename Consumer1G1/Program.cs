@@ -8,8 +8,8 @@ namespace Consumer1G1
         {
             string bootstrapServers = "localhost:9092"; // Replace with your Kafka bootstrap servers
             string groupId = "group1"; // Consumer group ID
-            string topic = "kafka4"; // Replace with your Kafka topic name
-
+            string topic = "KAFKADEMO4"; // Replace with your Kafka topic name
+      
             var config = new ConsumerConfig
             {
                 BootstrapServers = bootstrapServers,
@@ -20,7 +20,10 @@ namespace Consumer1G1
 
             using var consumer = new ConsumerBuilder<Ignore, string>(config).Build();
 
-            consumer.Subscribe(topic);
+            consumer.Assign(new List<TopicPartitionOffset>
+            {
+                new TopicPartitionOffset(topic, 0, Offset.Beginning) // Partition 0 from the beginning
+            });
 
             CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
 
@@ -36,6 +39,7 @@ namespace Consumer1G1
                 {
                     Console.WriteLine("c1g1");
                     var consumeResult = consumer.Consume(cancellationTokenSource.Token);
+                    Console.WriteLine($"Partition 0 - Received message: {consumeResult.Message.Value}");
                     Console.WriteLine($"Received message: {consumeResult.Message.Value}");
                 }
             }

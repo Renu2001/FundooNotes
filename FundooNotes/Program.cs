@@ -24,44 +24,6 @@ try
 
     builder.Configuration.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
 
-    // Bind producer configuration
-    var producerConfiguration = new ProducerConfig();
-    builder.Configuration.Bind("producerconfiguration", producerConfiguration);
-    builder.Services.AddSingleton<ProducerConfig>(producerConfiguration);
-
-    // Directly integrate topic creation logic
-    var topicName = builder.Configuration["Kafka:TopicName"];
-    var numPartitions = int.Parse(builder.Configuration["Kafka:NumPartitions"]);
-    var replicationFactor = short.Parse(builder.Configuration["Kafka:ReplicationFactor"]);
-
-    var config = new AdminClientConfig
-    {
-        BootstrapServers = builder.Configuration["producerconfiguration:bootstrapservers"]
-    };
-
-    using (var adminClient = new AdminClientBuilder(config).Build())
-    {
-        try
-        {
-            adminClient.CreateTopicsAsync(new List<TopicSpecification> {
-            new TopicSpecification { Name = topicName, NumPartitions = numPartitions, ReplicationFactor = replicationFactor }
-        }).GetAwaiter().GetResult();
-            Console.WriteLine($"Topic {topicName} created successfully");
-        }
-        catch (CreateTopicsException e)
-        {
-            if (e.Results[0].Error.IsError)
-            {
-                Console.WriteLine($"An error occurred creating topic {topicName}: {e.Results[0].Error.Reason}");
-            }
-            else
-            {
-                Console.WriteLine($"Topic {topicName} already exists");
-            }
-        }
-    }
-
-
     builder.Logging.ClearProviders();
     builder.Logging.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Trace);
     builder.Host.UseNLog();
@@ -149,8 +111,8 @@ try
     builder.Services.AddScoped<Email>();
     builder.Services.AddScoped<RabbitDemo>();
     builder.Services.AddScoped<ReddisDemo>();
-
-
+    builder.Services.AddScoped<KafkaProducer>();
+    builder.Services.AddScoped<KafkaService>();
 
     // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
     builder.Services.AddEndpointsApiExplorer();
@@ -162,6 +124,11 @@ try
 
 
     var app = builder.Build();
+    using (var scope = app.Services.CreateScope())
+    {
+        var kafkaSetup = scope.ServiceProvider.GetRequiredService<KafkaService>();
+        kafkaSetup.CreateTopicAsync().GetAwaiter().GetResult();
+    }
 
     // Configure the HTTP request pipeline.
     if (app.Environment.IsDevelopment())

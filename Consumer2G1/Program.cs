@@ -8,7 +8,7 @@ namespace Consumer2G1
         {
             string bootstrapServers = "localhost:9092"; // Replace with your Kafka bootstrap servers
             string groupId = "group1"; // Consumer group ID
-            string topic = "kafka4"; // Replace with your Kafka topic name
+            string topic = "KAFKADEMO4"; // Replace with your Kafka topic name
 
             var config = new ConsumerConfig
             {
@@ -17,11 +17,12 @@ namespace Consumer2G1
                 AutoOffsetReset = AutoOffsetReset.Earliest, // Set offset to beginning for this example; adjust as needed
                 EnableAutoCommit = true // Enable auto commit of offsets
             };
-
             using var consumer = new ConsumerBuilder<Ignore, string>(config).Build();
 
-            consumer.Subscribe(topic);
-
+            consumer.Assign(new List<TopicPartitionOffset>
+            {
+                new TopicPartitionOffset(topic, 1, Offset.Beginning) // Partition 1 from the beginning
+            });
             CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
 
             Console.CancelKeyPress += (_, e) => {
@@ -36,6 +37,8 @@ namespace Consumer2G1
                 {
                     Console.WriteLine("c2g1");
                     var consumeResult = consumer.Consume(cancellationTokenSource.Token);
+                    Console.WriteLine($"Partition 1 - Received message: {consumeResult.Message.Value}");
+
                     Console.WriteLine($"Received message: {consumeResult.Message.Value}");
                 }
             }
