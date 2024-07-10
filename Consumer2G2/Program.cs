@@ -10,7 +10,6 @@ namespace Consumer2G2
             string bootstrapServers = "localhost:9092"; // Replace with your Kafka bootstrap servers
             string groupId = "group2"; // Consumer group ID
             string topic = "KAFKADEMO4"; // Replace with your Kafka topic name
-            int id = 1;
 
             var config = new ConsumerConfig
             {
